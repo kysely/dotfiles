@@ -15,6 +15,10 @@ let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
+" KEY SHORTCUTS:
+imap jk <Esc>
+nnoremap <C-d> :sh<CR>
+
 " SNIPPETS:
 nnoremap ,class :-1read $HOME/.vim/.class_template.py<CR>
 
