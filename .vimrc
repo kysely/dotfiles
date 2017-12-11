@@ -1,6 +1,6 @@
 filetype plugin on
 syntax enable
-colorscheme base16-default-dark
+colorscheme base16-tomorrow-night
 
 set nocompatible
 set path+=**
@@ -16,7 +16,7 @@ nnoremap <C-d> :sh<CR>
 
 " NETRW Tree View:
 let g:netrw_banner=0
-let g:netrw_winsize=25
+let g:netrw_winsize=20
 let g:netrw_browse_split=4
 let g:netrw_altv=1
 let g:netrw_liststyle=3
