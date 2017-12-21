@@ -1,0 +1,54 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.fontSize": 13,
+    "editor.lineHeight": 24,
+    "editor.fontFamily": "'Fira Mono', Menlo, Monaco, 'Courier New', monospace",
+    "editor.renderWhitespace": "none",
+    "editor.renderIndentGuides": true,
+    "editor.rulers": [
+        88
+    ],
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "string.quoted.docstring.multi.python",
+                    "punctuation.definition.string.begin.python",
+                    "punctuation.definition.string.end.python"
+                ],
+                "settings": {
+                    "foreground": "#777a7e"
+                }
+            }
+        ]
+    },
+    "git.enabled": true,
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.lineHeight": 1.5,
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.scrollback": 5000,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/__pycache__": true,
+        "**/.cache": true,
+    },
+    "telemetry.enableTelemetry": false,
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "Boxy Tomorrow",
+    "workbench.panel.location": "right",
+    "extensions.ignoreRecommendations": false,
+    "editor.minimap.enabled": false,
+    "workbench.sideBar.location": "left",
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.visible": true,
+    "editor.multiCursorModifier": "alt",
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j","k"],
+            "after": ["<Esc>"]
+        }
+    ],
+}
