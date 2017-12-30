@@ -14,7 +14,8 @@
                 "scope": [
                     "string.quoted.docstring.multi.python",
                     "punctuation.definition.string.begin.python",
-                    "punctuation.definition.string.end.python"
+                    "punctuation.definition.string.end.python",
+                    "comment.line"
                 ],
                 "settings": {
                     "foreground": "#777a7e"
@@ -38,12 +39,15 @@
     "telemetry.enableTelemetry": false,
     "window.zoomLevel": 0,
     "workbench.colorTheme": "Boxy Tomorrow",
-    "workbench.panel.location": "right",
     "extensions.ignoreRecommendations": false,
     "editor.minimap.enabled": false,
     "workbench.sideBar.location": "left",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.visible": true,
+    "workbench.colorCustomizations": {
+        "editorRuler.foreground": "#2a2b2c",
+        "editorIndentGuide.background": "#2a2b2c"
+    },
     "editor.multiCursorModifier": "alt",
     "vim.insertModeKeyBindings": [
         {
