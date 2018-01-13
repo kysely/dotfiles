@@ -1,17 +1,23 @@
 filetype plugin on
 syntax enable
-colorscheme base16-tomorrow-night
 
 set nocompatible
 set path+=**
 set wildmenu
 set number
-set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+
+" INDENTATION:
+set smartindent
+set tabstop=4 shiftwidth=4 noexpandtab nosmarttab autoindent
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
+
+" VERTICAL RULERS:
 set cc=90
-hi ColorColumn ctermbg=lightgrey guibg=lightgrey
+hi ColorColumn ctermbg=Black guibg=Black
 
 " KEY SHORTCUTS:
 imap jk <Esc>
+imap JK <Esc>
 nnoremap <C-d> :sh<CR>
 
 " NETRW Tree View:
@@ -23,9 +29,7 @@ let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
-" TAG JUMPING:
-command! MakeTags !ctags -R .
-
 " SNIPPETS:
-nnoremap ,class :-1read $HOME/.vim/.class_template.py<CR>
+imap ,doc """<Esc>o"""<Esc>ka
+imap ,class <Esc>:-1read $HOME/.vim/snippets/class_template.py<CR>wce
 

@@ -1,0 +1,17 @@
+#!/bin/bash 
+
+echo ""
+echo "Installing VSCode environment settings..."
+
+SETTINGS_DIR="${HOME}/Library/Application Support/Code/User"
+
+
+# INSTALL SETTINGS
+cp ./settings.json "${SETTINGS_DIR}/settings.json"
+echo "    Installed settings.json file"
+
+# INSTALL KEYBINDINGS
+cp ./keybindings.json "${SETTINGS_DIR}/keybindings.json"
+echo "    Installed keybindings.json file"
+echo ""
+

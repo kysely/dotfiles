@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+	echo ""
+	echo "You have to specify the environment you want to install"
+	echo "These are available:"
+	ls -d */
+	
+	echo ""
+else
+	cd $1
+	./install
+	cd ..
+fi
+

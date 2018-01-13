@@ -1,7 +1,7 @@
 // Place your settings in this file to overwrite the default settings
 {
     "editor.fontSize": 13,
-    "editor.lineHeight": 24,
+    "editor.lineHeight": 23,
     "editor.fontFamily": "'Fira Mono', Menlo, Monaco, 'Courier New', monospace",
     "editor.renderWhitespace": "none",
     "editor.renderIndentGuides": true,
@@ -15,6 +15,7 @@
                     "string.quoted.docstring.multi.python",
                     "punctuation.definition.string.begin.python",
                     "punctuation.definition.string.end.python",
+                    "keyword.codetag.notation.python",
                     "comment.line"
                 ],
                 "settings": {
@@ -52,6 +53,9 @@
     "vim.insertModeKeyBindings": [
         {
             "before": ["j","k"],
+            "after": ["<Esc>"]
+        },{
+            "before": ["J","K"],
             "after": ["<Esc>"]
         }
     ],

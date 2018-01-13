@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo ""
+echo "Uninstalling VSCode environment settings..."
+SETTINGS_DIR="${HOME}/Library/Application Support/Code/User"
+
+# UNINSTALL SETTINGS
+rm "${SETTINGS_DIR}/settings.json"
+echo "    Uninstalled settings.json"
+
+# UNINSTALL KEYBINDINGS
+rm "${SETTINGS_DIR}/keybindings.json"
+echo "    Uninstalled keybindings.json"
+echo ""
+

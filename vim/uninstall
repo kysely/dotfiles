@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo ""
+echo "Uninstalling Vim environment settings..."
+
+# UNINSTALL .VIMRC
+rm ~/.vimrc
+echo "    Uninstalled .vimrc config file"
+
+# UNINSTALL SNIPPETS
+rm -rf ~/.vim/snippets/
+echo "    Uninstalled Vim snippets"
+echo ""
+
