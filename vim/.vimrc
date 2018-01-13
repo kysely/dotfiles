@@ -2,6 +2,7 @@ filetype plugin on
 syntax enable
 
 set nocompatible
+set hidden
 set path+=**
 set wildmenu
 set number
@@ -15,10 +16,32 @@ autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
 set cc=90
 hi ColorColumn ctermbg=Black guibg=Black
 
+" COLOR CUSTOMIZATION:
+hi TabLineFill ctermfg=Black ctermbg=NONE
+hi TabLine ctermfg=Blue ctermbg=Black
+hi TabLineSel ctermfg=Red ctermbg=NONE
+
+hi VertSplit ctermfg=Black ctermbg=Black
+hi StatusLine ctermfg=Black ctermbg=Black
+hi StatusLineNC ctermfg=Black ctermbg=Black
+
 " KEY SHORTCUTS:
 imap jk <Esc>
 imap JK <Esc>
+
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
 nnoremap <C-d> :sh<CR>
+nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
+nnoremap vsp :vsplit 
+nnoremap sp :split 
+nnoremap gt :bN<CR>
+nnoremap tabs :ls<CR>
+
+nnoremap side 30<C-w><Bar>
 
 " NETRW Tree View:
 let g:netrw_banner=0

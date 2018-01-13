@@ -4,7 +4,7 @@ echo ""
 echo "Installing Vim environment settings..."
 
 # INSTALL .VIMRC
-cp ./vimrc ~/.vimrc
+cp ./.vimrc ~/.vimrc
 echo "    Installed .vimrc config file"
 
 # INSTALL SNIPPETS
