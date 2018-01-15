@@ -6,6 +6,8 @@ set hidden
 set path+=**
 set wildmenu
 set number
+set splitright
+set laststatus=2
 
 " INDENTATION:
 set smartindent
@@ -14,16 +16,12 @@ autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
 
 " VERTICAL RULERS:
 set cc=90
-hi ColorColumn ctermbg=Black guibg=Black
 
 " COLOR CUSTOMIZATION:
-hi TabLineFill ctermfg=Black ctermbg=NONE
-hi TabLine ctermfg=Blue ctermbg=Black
-hi TabLineSel ctermfg=Red ctermbg=NONE
-
+hi ColorColumn ctermbg=Black guibg=Black
 hi VertSplit ctermfg=Black ctermbg=Black
-hi StatusLine ctermfg=Black ctermbg=Black
-hi StatusLineNC ctermfg=Black ctermbg=Black
+hi StatusLine ctermfg=Yellow ctermbg=Black
+hi StatusLineNC ctermfg=Black ctermbg=DarkGray
 
 " KEY SHORTCUTS:
 imap jk <Esc>
@@ -34,14 +32,21 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap <C-d> :sh<CR>
+nnoremap sidebar 30<C-w><Bar>
+nnoremap sideterm 53<C-w><Bar>
+
+nnoremap ter :ConqueTerm bash<CR>
+nnoremap vter :ConqueTermVSplit bash<CR><Esc>53<C-w><Bar>i
 nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
 nnoremap vsp :vsplit 
 nnoremap sp :split 
 nnoremap gt :bN<CR>
 nnoremap tabs :ls<CR>
 
-nnoremap side 30<C-w><Bar>
+" SNIPPETS:
+imap ,doc """<Esc>o"""<Esc>ka
+imap ,class <Esc>:-1read $HOME/.vim/snippets/class_template.py<CR>wce
+
 
 " NETRW Tree View:
 let g:netrw_banner=0
@@ -52,7 +57,15 @@ let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
-" SNIPPETS:
-imap ,doc """<Esc>o"""<Esc>ka
-imap ,class <Esc>:-1read $HOME/.vim/snippets/class_template.py<CR>wce
+" VIM BUFFERLINE SETTINGS:
+let g:bufferline_active_buffer_left = ''
+let g:bufferline_active_buffer_right = ''
+let g:bufferline_show_bufnr = 0
+let g:bufferline_echo = 0
+autocmd VimEnter *
+	\ let &statusline='%{bufferline#refresh_status()}'
+		\ .bufferline#get_status_string()
+
+" CTRLP:
+let g:ctrlp_show_hidden = 1
 

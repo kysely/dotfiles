@@ -18,3 +18,62 @@ cp ./snippets/* ~/.vim/snippets/
 echo "    Installed Vim snippets"
 echo ""
 
+# INSTALL PLUGINS
+# --- ConqueTerm
+echo "    Installing ConqueTerm"
+echo "        Downloading..."
+curl -s "https://vim.sourceforge.io/scripts/download_script.php?src_id=16251" >> cq.tar.gz
+
+echo "        Unzipping..."
+tar xf cq.tar.gz
+rm cq.tar.gz
+
+echo "        Installing..."
+mkdir -p ~/.vim/plugin
+cp conque_2.2/plugin/* ~/.vim/plugin/
+
+mkdir -p ~/.vim/syntax
+cp conque_2.2/syntax/* ~/.vim/syntax/
+
+mkdir -p ~/.vim/doc
+cp conque_2.2/doc/* ~/.vim/doc/
+
+mkdir -p ~/.vim/autoload/conque_term
+cp -rf conque_2.2/autoload/* ~/.vim/autoload/
+
+echo "    Installed ConqueTerm"
+echo ""
+rm -rf conque_2.2/
+
+# --- Bufferline
+echo "    Installing Bufferline"
+echo "        Cloning..."
+git clone --quiet https://github.com/bling/vim-bufferline
+
+echo "        Installing..."
+cp vim-bufferline/plugin/* ~/.vim/plugin/
+cp vim-bufferline/doc/* ~/.vim/doc/
+
+mkdir -p ~/.vim/autoload/bufferline/algos/
+cp -rf vim-bufferline/autoload/* ~/.vim/autoload/
+
+echo "    Installed Bufferline"
+echo ""
+rm -rf vim-bufferline/
+
+# --- CtrlP
+echo "    Installing CtrlP"
+echo "        Cloning..."
+git clone --quiet https://github.com/ctrlpvim/ctrlp.vim.git
+
+echo "        Installing..."
+cp ctrlp.vim/plugin/* ~/.vim/plugin/
+cp ctrlp.vim/doc/* ~/.vim/doc/
+
+mkdir -p ~/.vim/autoload/ctrlp/
+cp -rf ctrlp.vim/autoload/* ~/.vim/autoload/
+
+echo "    Installed CtrlP"
+echo ""
+rm -rf ctrlp.vim/
+
