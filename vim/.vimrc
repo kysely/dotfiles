@@ -37,6 +37,7 @@ nnoremap sideterm 53<C-w><Bar>
 
 nnoremap ter :ConqueTerm bash<CR>
 nnoremap vter :ConqueTermVSplit bash<CR><Esc>53<C-w><Bar>i
+nnoremap tt <C-w>li
 nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
 nnoremap vsp :vsplit 
 nnoremap sp :split 
