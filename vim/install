@@ -8,72 +8,81 @@ cp ./.vimrc ~/.vimrc
 echo "    Installed .vimrc config file"
 
 # INSTALL SNIPPETS
-if [ ! -d ~/.vim/snippets ]
-then
-    mkdir -p ~/.vim/snippets
-    echo "    New '~/.vim/snippets' directory"
-fi
-
+mkdir -p ~/.vim/snippets
 cp ./snippets/* ~/.vim/snippets/
 echo "    Installed Vim snippets"
 echo ""
 
 # INSTALL PLUGINS
+# --- Pathogen
+echo "    Installing Pathogen"
+echo "        Downloading and installing..."
+mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+echo "    Installed Pathogen"
+echo ""
+
 # --- ConqueTerm
 echo "    Installing ConqueTerm"
 echo "        Downloading..."
-curl -s "https://vim.sourceforge.io/scripts/download_script.php?src_id=16251" >> cq.tar.gz
+curl -s "https://vim.sourceforge.io/scripts/download_script.php?src_id=16251" \
+	>> ~/.vim/bundle/cq.tar.gz
 
 echo "        Unzipping..."
-tar xf cq.tar.gz
-rm cq.tar.gz
-
-echo "        Installing..."
-mkdir -p ~/.vim/plugin
-cp conque_2.2/plugin/* ~/.vim/plugin/
-
-mkdir -p ~/.vim/syntax
-cp conque_2.2/syntax/* ~/.vim/syntax/
-
-mkdir -p ~/.vim/doc
-cp conque_2.2/doc/* ~/.vim/doc/
-
-mkdir -p ~/.vim/autoload/conque_term
-cp -rf conque_2.2/autoload/* ~/.vim/autoload/
+tar xf ~/.vim/bundle/cq.tar.gz -C ~/.vim/bundle/
+rm ~/.vim/bundle/cq.tar.gz
+mv ~/.vim/bundle/conque_2.2 ~/.vim/bundle/conque
 
 echo "    Installed ConqueTerm"
 echo ""
-rm -rf conque_2.2/
 
-# --- Bufferline
+## --- Bufferline
 echo "    Installing Bufferline"
 echo "        Cloning..."
-git clone --quiet https://github.com/bling/vim-bufferline
-
-echo "        Installing..."
-cp vim-bufferline/plugin/* ~/.vim/plugin/
-cp vim-bufferline/doc/* ~/.vim/doc/
-
-mkdir -p ~/.vim/autoload/bufferline/algos/
-cp -rf vim-bufferline/autoload/* ~/.vim/autoload/
+git clone --quiet https://github.com/bling/vim-bufferline ~/.vim/bundle/vim-bufferline
 
 echo "    Installed Bufferline"
 echo ""
-rm -rf vim-bufferline/
 
-# --- CtrlP
+## --- CtrlP
 echo "    Installing CtrlP"
 echo "        Cloning..."
-git clone --quiet https://github.com/ctrlpvim/ctrlp.vim.git
-
-echo "        Installing..."
-cp ctrlp.vim/plugin/* ~/.vim/plugin/
-cp ctrlp.vim/doc/* ~/.vim/doc/
-
-mkdir -p ~/.vim/autoload/ctrlp/
-cp -rf ctrlp.vim/autoload/* ~/.vim/autoload/
+git clone --quiet https://github.com/ctrlpvim/ctrlp.vim.git ~/.vim/bundle/ctrlp.vim
 
 echo "    Installed CtrlP"
 echo ""
-rm -rf ctrlp.vim/
+
+# -- Completor
+echo "    Installing Completor"
+echo "        Cloning..."
+mkdir -p ~/.vim/pack/completor/start
+cd ~/.vim/pack/completor/start
+git clone --quiet  https://github.com/maralla/completor.vim.git
+
+echo "        Installing Jedi..."
+python3 -m pip install jedi
+pip3 install jedi
+
+echo "    Installed Completor"
+echo ""
+
+## --- YouCompleteMe
+if [ "$1" == "--ycm" ]; then
+	echo "    Installing YouCompleteMe"
+	echo "        Cloning..."
+	git clone --quiet https://github.com/Valloric/YouCompleteMe \
+	                  ~/.vim/bundle/YouCompleteMe
+	cd ~/.vim/bundle/YouCompleteMe/
+
+	echo "        Cloning submodules..."
+	git submodule --quiet update --init --recursive
+
+	echo "        Installing..."
+	./install.py --clang-completer
+
+	echo ""
+	echo "    Installed YouCompleteMe"
+	echo ""
+fi
 

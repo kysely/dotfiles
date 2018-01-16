@@ -1,6 +1,7 @@
 filetype plugin on
 syntax enable
 
+execute pathogen#infect()
 set nocompatible
 set hidden
 set path+=**
@@ -44,10 +45,24 @@ nnoremap sp :split
 nnoremap gt :bN<CR>
 nnoremap tabs :ls<CR>
 
+"function! Tab_Or_Complete()
+"	if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
+"		return "\<C-N>"
+"	else
+"		return "\<Tab>"
+"	endif
+"endfunction
+"inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
+"set dictionary="/usr/dict/words"
+
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
 imap ,class <Esc>:-1read $HOME/.vim/snippets/class_template.py<CR>wce
 
+" COMPLETOR:
+let g:completor_clang_binary = '/usr/bin/clang'
+let g:completor_python_binary = '/Users/radek/anaconda3/bin/python3'
+let g:completor_node_binary = '/usr/local/bin/node'
 
 " NETRW Tree View:
 let g:netrw_banner=0
@@ -66,6 +81,9 @@ let g:bufferline_echo = 0
 autocmd VimEnter *
 	\ let &statusline='%{bufferline#refresh_status()}'
 		\ .bufferline#get_status_string()
+
+" PYDICTION:
+" let g:pydiction_location = '~/.vim/bundle/pydiction/complete-dict'
 
 " CTRLP:
 let g:ctrlp_show_hidden = 1

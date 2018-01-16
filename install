@@ -9,7 +9,7 @@ if [ "$1" == "" ]; then
 	echo ""
 else
 	cd $1
-	./install
+	./install ${2}
 	cd ..
 fi
 
