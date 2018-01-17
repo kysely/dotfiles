@@ -54,35 +54,18 @@ echo "    Installed CtrlP"
 echo ""
 
 # -- Completor
-echo "    Installing Completor"
-echo "        Cloning..."
-mkdir -p ~/.vim/pack/completor/start
-cd ~/.vim/pack/completor/start
-git clone --quiet  https://github.com/maralla/completor.vim.git
-
-echo "        Installing Jedi..."
-python3 -m pip install jedi
-pip3 install jedi
-
-echo "    Installed Completor"
-echo ""
-
-## --- YouCompleteMe
-if [ "$1" == "--ycm" ]; then
-	echo "    Installing YouCompleteMe"
+if [ "$1" == "--completor" ]; then
+	echo "    Installing Completor"
 	echo "        Cloning..."
-	git clone --quiet https://github.com/Valloric/YouCompleteMe \
-	                  ~/.vim/bundle/YouCompleteMe
-	cd ~/.vim/bundle/YouCompleteMe/
+	mkdir -p ~/.vim/pack/completor/start
+	cd ~/.vim/pack/completor/start
+	git clone --quiet  https://github.com/maralla/completor.vim.git
 
-	echo "        Cloning submodules..."
-	git submodule --quiet update --init --recursive
+	echo "        Installing Jedi..."
+	python3 -m pip install jedi
+	pip3 install jedi
 
-	echo "        Installing..."
-	./install.py --clang-completer
-
-	echo ""
-	echo "    Installed YouCompleteMe"
+	echo "    Installed Completor"
 	echo ""
 fi
 
