@@ -1,14 +1,15 @@
 filetype plugin on
 syntax enable
 
-execute pathogen#infect()
-set nocompatible
 set hidden
+set number
 set path+=**
 set wildmenu
-set number
 set splitright
+set nocompatible
 set laststatus=2
+set showtabline=2
+execute pathogen#infect()
 
 " INDENTATION:
 set smartindent
@@ -22,8 +23,11 @@ set cc=90
 " COLOR CUSTOMIZATION:
 hi ColorColumn ctermbg=Black guibg=Black
 hi VertSplit ctermfg=Black ctermbg=Black
-hi StatusLine ctermfg=Yellow ctermbg=Black
-hi StatusLineNC ctermfg=Black ctermbg=DarkGray
+
+" COLOR SCHEME:
+set termguicolors
+let ayucolor="mirage"
+colorscheme ayu
 
 " KEY SHORTCUTS:
 imap jk <Esc>
@@ -44,6 +48,7 @@ nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
 nnoremap vsp :vsplit 
 nnoremap sp :split 
 nnoremap gt :bn<CR>
+nnoremap gn :bp<CR>
 nnoremap tabs :ls<CR>
 
 " SNIPPETS:
@@ -67,14 +72,62 @@ let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
-" VIM BUFFERLINE SETTINGS:
-let g:bufferline_active_buffer_left = ''
-let g:bufferline_active_buffer_right = ''
-let g:bufferline_show_bufnr = 0
-let g:bufferline_echo = 0
-autocmd VimEnter *
-	\ let &statusline='%{bufferline#refresh_status()}'
-		\ .bufferline#get_status_string()
+" LIGHTLINE:
+let g:lightline = {
+    \ 'colorscheme': 'Dracula',
+    \ 'active': {
+    \   'right': [ [ 'lineinfo' ],
+    \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
+    \ },
+    \ 'tabline': {
+    \   'left': [ [ 'bufferinfo' ],
+    \             [ 'separator' ],
+    \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+    \   'right': [ ],
+    \ },
+    \ 'component_expand': {
+    \   'buffercurrent': 'lightline#buffer#buffercurrent',
+    \   'bufferbefore': 'lightline#buffer#bufferbefore',
+    \   'bufferafter': 'lightline#buffer#bufferafter',
+    \ },
+    \ 'component_type': {
+    \   'buffercurrent': 'tabsel',
+    \   'bufferbefore': 'raw',
+    \   'bufferafter': 'raw',
+    \ },
+    \ 'component_function': {
+    \   'bufferinfo': 'lightline#buffer#bufferinfo',
+    \ },
+    \ 'component': {
+    \   'separator': '',
+    \ },
+    \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+    \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+    \ }
+
+
+let g:lightline_buffer_logo = ''
+let g:lightline_buffer_readonly_icon = ''
+"let g:lightline_buffer_modified_icon = '✭'
+let g:lightline_buffer_modified_icon = '+'
+let g:lightline_buffer_git_icon = ' '
+let g:lightline_buffer_ellipsis_icon = '..'
+let g:lightline_buffer_expand_left_icon = '◀ '
+let g:lightline_buffer_expand_right_icon = ' ▶'
+let g:lightline_buffer_active_buffer_left_icon = ''
+let g:lightline_buffer_active_buffer_right_icon = ''
+let g:lightline_buffer_separator_icon = '  '
+
+let g:lightline_buffer_show_bufnr = 1
+let g:lightline_buffer_rotate = 0
+let g:lightline_buffer_fname_mod = ':t'
+let g:lightline_buffer_excludes = ['vimfiler']
+
+let g:lightline_buffer_maxflen = 30
+let g:lightline_buffer_maxfextlen = 3
+let g:lightline_buffer_minflen = 16
+let g:lightline_buffer_minfextlen = 3
+let g:lightline_buffer_reservelen = 20
 
 " CTRLP:
 let g:ctrlp_show_hidden = 1

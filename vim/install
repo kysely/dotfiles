@@ -26,16 +26,46 @@ echo ""
 # --- Cython Syntax
 echo "    Installing Cython Syntax"
 echo "        Cloning..."
-git clone --quiet https://github.com/tshirtman/vim-cython ~/.vim/bundle/vim-cython
+git clone -q https://github.com/tshirtman/vim-cython ~/.vim/bundle/vim-cython
 
 echo "    Installed Cython Syntax"
+echo ""
+
+# --- Ayo Color Scheme
+echo "    Installing Ayu Color Scheme"
+echo "        Cloning..."
+git clone -q https://github.com/ayu-theme/ayu-vim ./ayu
+
+echo "        Installing..."
+mkdir -p ~/.vim/colors
+cp ./ayu/colors/* ~/.vim/colors/
+
+echo "    Installed Ayu Color Scheme"
+echo ""
+rm -rf ayu
+
+# --- Lightline
+echo "    Installing Lightline"
+echo "        Cloning..."
+git clone -q https://github.com/itchyny/lightline.vim ~/.vim/bundle/lightline.vim
+
+echo "    Installed Lightline"
+echo ""
+
+# --- Lightline Buffer
+echo "    Installing Lightline Buffer"
+echo "        Cloning..."
+git clone -q https://github.com/taohex/lightline-buffer \
+             ~/.vim/bundle/lightline-buffer
+
+echo "    Installed Lightline Buffer"
 echo ""
 
 # --- ConqueTerm
 echo "    Installing ConqueTerm"
 echo "        Downloading..."
 curl -s "https://vim.sourceforge.io/scripts/download_script.php?src_id=16251" \
-	>> ~/.vim/bundle/cq.tar.gz
+         >> ~/.vim/bundle/cq.tar.gz
 
 echo "        Unzipping..."
 tar xf ~/.vim/bundle/cq.tar.gz -C ~/.vim/bundle/
@@ -45,18 +75,10 @@ mv ~/.vim/bundle/conque_2.2 ~/.vim/bundle/conque
 echo "    Installed ConqueTerm"
 echo ""
 
-## --- Bufferline
-echo "    Installing Bufferline"
-echo "        Cloning..."
-git clone --quiet https://github.com/bling/vim-bufferline ~/.vim/bundle/vim-bufferline
-
-echo "    Installed Bufferline"
-echo ""
-
 ## --- CtrlP
 echo "    Installing CtrlP"
 echo "        Cloning..."
-git clone --quiet https://github.com/ctrlpvim/ctrlp.vim.git ~/.vim/bundle/ctrlp.vim
+git clone -q https://github.com/ctrlpvim/ctrlp.vim.git ~/.vim/bundle/ctrlp.vim
 
 echo "    Installed CtrlP"
 echo ""
@@ -67,11 +89,10 @@ if [ "$1" == "--completor" ]; then
 	echo "        Cloning..."
 	mkdir -p ~/.vim/pack/completor/start
 	cd ~/.vim/pack/completor/start
-	git clone --quiet  https://github.com/maralla/completor.vim.git
+	git clone -q https://github.com/maralla/completor.vim.git
 
 	echo "        Installing Jedi..."
-	python3 -m pip install jedi
-	pip3 install jedi
+	python3 -m pip install jedi && pip3 install jedi
 
 	echo "    Installed Completor"
 	echo ""
