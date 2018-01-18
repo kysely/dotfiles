@@ -14,6 +14,7 @@ set laststatus=2
 set smartindent
 set tabstop=4 shiftwidth=4 noexpandtab nosmarttab autoindent
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType cython setlocal tabstop=4 shiftwidth=4 noexpandtab
 
 " VERTICAL RULERS:
 set cc=90

@@ -23,6 +23,14 @@ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 echo "    Installed Pathogen"
 echo ""
 
+# --- Cython Syntax
+echo "    Installing Cython Syntax"
+echo "        Cloning..."
+git clone --quiet https://github.com/tshirtman/vim-cython ~/.vim/bundle/vim-cython
+
+echo "    Installed Cython Syntax"
+echo ""
+
 # --- ConqueTerm
 echo "    Installing ConqueTerm"
 echo "        Downloading..."
