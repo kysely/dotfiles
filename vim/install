@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ""
-echo "Installing Vim environment settings..."
+echo "Installing Vim environment"
 
 # INSTALL .VIMRC
 cp ./.vimrc ~/.vimrc
@@ -23,65 +23,34 @@ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 echo "    Installed Pathogen"
 echo ""
 
-# --- Cython Syntax
-echo "    Installing Cython Syntax"
+# Generic function for installing plugins using Pathogen
+install_plugin() {
+echo "    Installing ${1}"
 echo "        Cloning..."
-git clone -q https://github.com/tshirtman/vim-cython ~/.vim/bundle/vim-cython
 
-echo "    Installed Cython Syntax"
+{
+	cd ~/.vim/bundle/
+	git clone --quiet --recursive ${2}
+
+	echo "    Installed ${1}"
+} || {
+	echo "    Couldn't install ${1}"
+}
+
 echo ""
+}
 
-# --- Ayo Color Scheme
-echo "    Installing Ayu Color Scheme"
-echo "        Cloning..."
-git clone -q https://github.com/ayu-theme/ayu-vim ./ayu
-
-echo "        Installing..."
-mkdir -p ~/.vim/colors
-cp ./ayu/colors/* ~/.vim/colors/
-
-echo "    Installed Ayu Color Scheme"
-echo ""
-rm -rf ayu
-
-# --- Lightline
-echo "    Installing Lightline"
-echo "        Cloning..."
-git clone -q https://github.com/itchyny/lightline.vim ~/.vim/bundle/lightline.vim
-
-echo "    Installed Lightline"
-echo ""
-
-# --- Lightline Buffer
-echo "    Installing Lightline Buffer"
-echo "        Cloning..."
-git clone -q https://github.com/taohex/lightline-buffer \
-             ~/.vim/bundle/lightline-buffer
-
-echo "    Installed Lightline Buffer"
-echo ""
-
-# --- ConqueTerm
-echo "    Installing ConqueTerm"
-echo "        Downloading..."
-curl -s "https://vim.sourceforge.io/scripts/download_script.php?src_id=16251" \
-         >> ~/.vim/bundle/cq.tar.gz
-
-echo "        Unzipping..."
-tar xf ~/.vim/bundle/cq.tar.gz -C ~/.vim/bundle/
-rm ~/.vim/bundle/cq.tar.gz
-mv ~/.vim/bundle/conque_2.2 ~/.vim/bundle/conque
-
-echo "    Installed ConqueTerm"
-echo ""
-
-## --- CtrlP
-echo "    Installing CtrlP"
-echo "        Cloning..."
-git clone -q https://github.com/ctrlpvim/ctrlp.vim.git ~/.vim/bundle/ctrlp.vim
-
-echo "    Installed CtrlP"
-echo ""
+install_plugin "Cython Syntax" git://github.com/tshirtman/vim-cython.git
+install_plugin "Ayu Color Scheme" git://github.com/ayu-theme/ayu-vim.git
+install_plugin "Base16 Color Scheme" git://github.com/chriskempson/base16-vim.git
+install_plugin "Python Mode" git://github.com/python-mode/python-mode.git
+install_plugin "NERDTree" git://github.com/scrooloose/nerdtree.git
+install_plugin "Commentary" git://github.com/tpope/vim-commentary.git
+install_plugin "Fugitive" git://github.com/tpope/vim-fugitive.git
+install_plugin "CtrlP" git://github.com/ctrlpvim/ctrlp.vim.git
+install_plugin "Lightline" git://github.com/itchyny/lightline.vim.git
+install_plugin "Lightline Buffer" git://github.com/taohex/lightline-buffer.git
+install_plugin "ConqueTerm" git://github.com/rosenfeld/conque-term.git
 
 # -- Completor
 if [ "$1" == "--completor" ]; then
@@ -89,7 +58,7 @@ if [ "$1" == "--completor" ]; then
 	echo "        Cloning..."
 	mkdir -p ~/.vim/pack/completor/start
 	cd ~/.vim/pack/completor/start
-	git clone -q https://github.com/maralla/completor.vim.git
+	git clone -q git://github.com/maralla/completor.vim.git
 
 	echo "        Installing Jedi..."
 	python3 -m pip install jedi && pip3 install jedi

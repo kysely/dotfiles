@@ -9,20 +9,20 @@ set splitright
 set nocompatible
 set laststatus=2
 set showtabline=2
+set clipboard=unnamed
 execute pathogen#infect()
+execute pathogen#helptags()
 
 " INDENTATION:
-set smartindent
-set tabstop=4 shiftwidth=4 noexpandtab nosmarttab autoindent
-autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
-autocmd FileType cython setlocal tabstop=4 shiftwidth=4 noexpandtab
+set smartindent expandtab smarttab autoindent
+set tabstop=8 shiftwidth=4 softtabstop=4
 
 " VERTICAL RULERS:
-set cc=90
+set cc=80
 
 " COLOR CUSTOMIZATION:
 hi ColorColumn ctermbg=Black guibg=Black
-hi VertSplit ctermfg=Black ctermbg=Black
+hi VertSplit ctermfg=Black ctermbg=Black guibg=White
 
 " COLOR SCHEME:
 set termguicolors
@@ -39,21 +39,26 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap sidebar 30<C-w><Bar>
-nnoremap sideterm 53<C-w><Bar>
+nnoremap sideterm 62<C-w><Bar>
 
 nnoremap ter :ConqueTerm bash<CR>
-nnoremap vter :ConqueTermVSplit bash<CR><Esc>53<C-w><Bar>i
+nnoremap vter :ConqueTermVSplit bash<CR><Esc>62<C-w><Bar>i
 nnoremap tt <C-w>li
 nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
 nnoremap vsp :vsplit 
 nnoremap sp :split 
 nnoremap gt :bn<CR>
-nnoremap gn :bp<CR>
-nnoremap tabs :ls<CR>
+nnoremap gp :bp<CR>
+nmap " :NERDTreeToggle<CR><C-w>l
 
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
 imap ,class <Esc>:-1read $HOME/.vim/snippets/class_template.py<CR>wce
+
+" PYMODE:
+let g:pymode_syntax = 1
+let g:pymode_lint = 0
+let g:pymode_folding = 0
 
 " COMPLETOR:
 let g:completor_clang_binary = '/usr/bin/clang'
@@ -62,6 +67,14 @@ let g:completor_node_binary = '/usr/local/bin/node'
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+
+" NERDTREE:
+let NERDTreeIgnore=['\.pyc$', '\.pyo$', '__pycache__$', '\.swp$', '.DS_Store$', '.git$', '.cache$']
+let NERDTreeWinSize=30
+let NERDTreeShowHidden=1
+let NERDTreeMinimalUI=1
+autocmd VimEnter * NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " NETRW Tree View:
 let g:netrw_banner=0
@@ -76,13 +89,16 @@ let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 let g:lightline = {
     \ 'colorscheme': 'Dracula',
     \ 'active': {
+    \    'left': [ [ 'mode', 'paste' ],
+    \              [ 'readonly', 'filename', 'modified' ] ], 
     \   'right': [ [ 'lineinfo' ],
+    \              [ 'gitbranch' ],
     \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
     \ },
     \ 'tabline': {
-    \   'left': [ [ 'bufferinfo' ],
-    \             [ 'separator' ],
-    \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+    \    'left': [ [ 'bufferslabel' ],
+    \              [ 'separator' ],
+    \              [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
     \   'right': [ ],
     \ },
     \ 'component_expand': {
@@ -97,9 +113,11 @@ let g:lightline = {
     \ },
     \ 'component_function': {
     \   'bufferinfo': 'lightline#buffer#bufferinfo',
+    \   'gitbranch': 'fugitive#head',
     \ },
     \ 'component': {
     \   'separator': '',
+    \   'bufferslabel': 'buffers',
     \ },
     \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
     \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
@@ -108,7 +126,6 @@ let g:lightline = {
 
 let g:lightline_buffer_logo = ''
 let g:lightline_buffer_readonly_icon = ''
-"let g:lightline_buffer_modified_icon = '✭'
 let g:lightline_buffer_modified_icon = '+'
 let g:lightline_buffer_git_icon = ' '
 let g:lightline_buffer_ellipsis_icon = '..'
