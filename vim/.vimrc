@@ -14,11 +14,14 @@ execute pathogen#infect()
 execute pathogen#helptags()
 
 " INDENTATION:
-set smartindent expandtab smarttab autoindent
-set tabstop=8 shiftwidth=4 softtabstop=4
+set smartindent
+set tabstop=4 shiftwidth=4 noexpandtab nosmarttab autoindent
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType cython setlocal tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType pyrex  setlocal tabstop=4 shiftwidth=4 noexpandtab
 
 " VERTICAL RULERS:
-set cc=80
+set colorcolumn=80
 
 " COLOR CUSTOMIZATION:
 hi ColorColumn ctermbg=Black guibg=Black
@@ -44,12 +47,11 @@ nnoremap sideterm 62<C-w><Bar>
 nnoremap ter :ConqueTerm bash<CR>
 nnoremap vter :ConqueTermVSplit bash<CR><Esc>62<C-w><Bar>i
 nnoremap tt <C-w>li
-nnoremap vex :Vexplore .<CR>30<C-w><Bar><C-w>l
 nnoremap vsp :vsplit 
 nnoremap sp :split 
 nnoremap gt :bn<CR>
 nnoremap gp :bp<CR>
-nmap " :NERDTreeToggle<CR><C-w>l
+nmap " :NERDTreeToggle<CR>30<C-w><Bar><C-w>l
 
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
@@ -74,16 +76,7 @@ let NERDTreeWinSize=30
 let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
 autocmd VimEnter * NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" NETRW Tree View:
-let g:netrw_banner=0
-let g:netrw_winsize=20
-let g:netrw_browse_split=4
-let g:netrw_altv=1
-let g:netrw_liststyle=3
-let g:netrw_list_hide=netrw_gitignore#Hide()
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " LIGHTLINE:
 let g:lightline = {

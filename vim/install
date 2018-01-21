@@ -40,9 +40,7 @@ echo "        Cloning..."
 echo ""
 }
 
-install_plugin "Cython Syntax" git://github.com/tshirtman/vim-cython.git
 install_plugin "Ayu Color Scheme" git://github.com/ayu-theme/ayu-vim.git
-install_plugin "Base16 Color Scheme" git://github.com/chriskempson/base16-vim.git
 install_plugin "Python Mode" git://github.com/python-mode/python-mode.git
 install_plugin "NERDTree" git://github.com/scrooloose/nerdtree.git
 install_plugin "Commentary" git://github.com/tpope/vim-commentary.git
