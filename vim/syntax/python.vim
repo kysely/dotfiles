@@ -340,7 +340,7 @@ endif
     hi def link  pythonClass        Type
     hi def link  pythonParameters   Normal
     hi def link  pythonParam        Normal
-    hi def link  pythonBrackets     Normal
+    hi def link  pythonBrackets     Special
     hi def link  pythonClassParameters Normal
     hi def link  pythonSelf         Identifier
     hi def link  pythonPunct        Special
@@ -395,7 +395,7 @@ endif
     hi def link  pythonBinError     Error
 
     hi def link  pythonBuiltinType  Type
-    hi def link  pythonBuiltinObj   Number
+    hi def link  pythonBuiltinObj   Constant
     hi def link  pythonBuiltinFunc  Function
 
     hi def link  pythonExClass      Type
