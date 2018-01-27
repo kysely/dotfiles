@@ -7,13 +7,16 @@ set path+=**
 set wildmenu
 set noshowmode
 set splitright
-set linespace=6
-set guioptions=
 set nocompatible
 set laststatus=2
 set clipboard=unnamed
 execute pathogen#infect()
 execute pathogen#helptags()
+
+" GUI:
+set guioptions=
+set linespace=8
+set guifont=Fira\ Code:h13
 
 " INDENTATION:
 set smartindent
