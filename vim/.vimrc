@@ -5,10 +5,12 @@ set hidden
 set number
 set path+=**
 set wildmenu
+set noshowmode
 set splitright
+set linespace=6
+set guioptions=
 set nocompatible
 set laststatus=2
-set showtabline=2
 set clipboard=unnamed
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -42,10 +44,10 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap sidebar 30<C-w><Bar>
-nnoremap sideterm 62<C-w><Bar>
+nnoremap sideterm 57<C-w><Bar>
 
 nnoremap ter :ConqueTerm bash<CR>
-nnoremap vter :ConqueTermVSplit bash<CR><Esc>62<C-w><Bar>i
+nnoremap vter :ConqueTermVSplit bash<CR><Esc>57<C-w><Bar>i
 nnoremap tt <C-w>li
 nnoremap vsp :vsplit 
 nnoremap sp :split 
@@ -62,7 +64,7 @@ let g:indent_guides_enable_on_vim_startup = 1
 
 " PYMODE:
 let g:pymode_syntax = 1
-let g:pymode_folding = 1
+let g:pymode_folding = 0
 let g:pymode_options_max_line_length = 79
 
 let g:pymode_lint = 0
@@ -90,66 +92,23 @@ let NERDTreeMinimalUI=1
 autocmd VimEnter * NERDTree
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-" LIGHTLINE:
-let g:lightline = {
-    \ 'colorscheme': 'Dracula',
-    \ 'active': {
-    \    'left': [ [ 'mode', 'paste' ],
-    \              [ 'readonly', 'filename', 'modified' ] ], 
-    \   'right': [ [ 'lineinfo' ],
-    \              [ 'gitbranch' ],
-    \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
-    \ },
-    \ 'tabline': {
-    \    'left': [ [ 'bufferslabel' ],
-    \              [ 'separator' ],
-    \              [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-    \   'right': [ ],
-    \ },
-    \ 'component_expand': {
-    \   'buffercurrent': 'lightline#buffer#buffercurrent',
-    \   'bufferbefore': 'lightline#buffer#bufferbefore',
-    \   'bufferafter': 'lightline#buffer#bufferafter',
-    \ },
-    \ 'component_type': {
-    \   'buffercurrent': 'tabsel',
-    \   'bufferbefore': 'raw',
-    \   'bufferafter': 'raw',
-    \ },
-    \ 'component_function': {
-    \   'bufferinfo': 'lightline#buffer#bufferinfo',
-    \   'gitbranch': 'fugitive#head',
-    \ },
-    \ 'component': {
-    \   'separator': '',
-    \   'bufferslabel': 'buffers',
-    \ },
-    \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-    \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
-    \ }
+" BUFFERLINE:
+let g:bufferline_echo = 0
 
-
-let g:lightline_buffer_logo = ''
-let g:lightline_buffer_readonly_icon = ''
-let g:lightline_buffer_modified_icon = '+'
-let g:lightline_buffer_git_icon = ' '
-let g:lightline_buffer_ellipsis_icon = '..'
-let g:lightline_buffer_expand_left_icon = '◀ '
-let g:lightline_buffer_expand_right_icon = ' ▶'
-let g:lightline_buffer_active_buffer_left_icon = ''
-let g:lightline_buffer_active_buffer_right_icon = ''
-let g:lightline_buffer_separator_icon = '  '
-
-let g:lightline_buffer_show_bufnr = 1
-let g:lightline_buffer_rotate = 0
-let g:lightline_buffer_fname_mod = ':t'
-let g:lightline_buffer_excludes = ['vimfiler']
-
-let g:lightline_buffer_maxflen = 30
-let g:lightline_buffer_maxfextlen = 3
-let g:lightline_buffer_minflen = 16
-let g:lightline_buffer_minfextlen = 3
-let g:lightline_buffer_reservelen = 20
+" AIRLINE:
+let g:airline_theme='base16'
+let g:airline_extensions = ['branch', 'bufferline']
+let g:airline#extensions#default#layout = [
+	\ [ 'a', 'c' ],
+	\ [ 'x', 'y', 'z' ]
+	\ ]
+function! AirlineInit()
+	let g:airline_section_a = airline#section#create(['mode'])
+	let g:airline_section_x = airline#section#create(['filetype'])
+	let g:airline_section_y = airline#section#create(['branch'])
+	let g:airline_section_z = '%l:%c'
+endfunction
+autocmd VimEnter * call AirlineInit()
 
 " CTRLP:
 let g:ctrlp_show_hidden = 1

@@ -395,7 +395,7 @@ endif
     hi def link  pythonBinError     Error
 
     hi def link  pythonBuiltinType  Type
-    hi def link  pythonBuiltinObj   Identifier
+    hi def link  pythonBuiltinObj   Number
     hi def link  pythonBuiltinFunc  Function
 
     hi def link  pythonExClass      Type

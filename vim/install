@@ -68,9 +68,10 @@ install_plugin "NERDTree" git://github.com/scrooloose/nerdtree.git
 install_plugin "Commentary" git://github.com/tpope/vim-commentary.git
 install_plugin "Fugitive" git://github.com/tpope/vim-fugitive.git
 install_plugin "CtrlP" git://github.com/ctrlpvim/ctrlp.vim.git
-install_plugin "Lightline" git://github.com/itchyny/lightline.vim.git
-install_plugin "Lightline Buffer" git://github.com/taohex/lightline-buffer.git
+install_plugin "Bufferline" git://github.com/bling/vim-bufferline.git
 install_plugin "ConqueTerm" git://github.com/rosenfeld/conque-term.git
+install_plugin "Airline" git://github.com/vim-airline/vim-airline.git
+install_plugin "Airline Themes" git://github.com/vim-airline/vim-airline-themes.git
 
 # -- Completor
 if [ "$1" == "--completor" ]; then
