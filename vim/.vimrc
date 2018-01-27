@@ -67,7 +67,7 @@ let g:indent_guides_enable_on_vim_startup = 1
 
 " PYMODE:
 let g:pymode_syntax = 1
-let g:pymode_folding = 0
+let g:pymode_folding = 1
 let g:pymode_options_max_line_length = 79
 
 let g:pymode_lint = 0
