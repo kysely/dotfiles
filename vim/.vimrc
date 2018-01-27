@@ -15,7 +15,7 @@ execute pathogen#helptags()
 
 " GUI:
 set guioptions=
-set linespace=8
+set linespace=6
 set guifont=Fira\ Code:h13
 
 " INDENTATION:
