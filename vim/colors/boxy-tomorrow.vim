@@ -320,8 +320,10 @@ call <sid>hi("markdownCodeBlock",         s:gui0B, "", s:cterm0B, "", "", "")
 call <sid>hi("markdownHeadingDelimiter",  s:gui0D, "", s:cterm0D, "", "", "")
 
 " NERDTree highlighting
-call <sid>hi("NERDTreeDirSlash",  s:gui0D, "", s:cterm0D, "", "", "")
-call <sid>hi("NERDTreeExecFile",  s:gui05, "", s:cterm05, "", "", "")
+call <sid>hi("NERDTreeDirSlash",  s:gui03, "", s:cterm03, "", "", "")
+call <sid>hi("NERDTreeDir",  s:gui03, "", s:cterm03, "", "", "")
+call <sid>hi("NERDTreeFile",  s:gui03, "", s:cterm03, "", "", "")
+call <sid>hi("NERDTreeExecFile",  s:gui03, "", s:cterm03, "", "", "")
 
 " PHP highlighting
 call <sid>hi("phpMemberSelector",  s:gui05, "", s:cterm05, "", "", "")

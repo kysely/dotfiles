@@ -46,17 +46,17 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap sidebar 30<C-w><Bar>
-nnoremap sideterm 57<C-w><Bar>
+nnoremap sidebar 25<C-w><Bar>
+nnoremap sideterm 63<C-w><Bar>
 
 nnoremap ter :ConqueTerm bash<CR>
-nnoremap vter :ConqueTermVSplit bash<CR><Esc>57<C-w><Bar>i
+nnoremap vter :ConqueTermVSplit bash<CR><Esc>63<C-w><Bar>i
 nnoremap tt <C-w>li
 nnoremap vsp :vsplit 
 nnoremap sp :split 
 nnoremap gt :bn<CR>
 nnoremap gp :bp<CR>
-nmap " :NERDTreeToggle<CR>30<C-w><Bar><C-w>l
+nmap " :NERDTreeToggle<CR>25<C-w><Bar><C-w>l
 
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
@@ -89,7 +89,7 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 
 " NERDTREE:
 let NERDTreeIgnore=['\.pyc$', '\.pyo$', '__pycache__$', '\.swp$', '.DS_Store$', '.git$', '.cache$']
-let NERDTreeWinSize=30
+let NERDTreeWinSize=25
 let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
 autocmd VimEnter * NERDTree
