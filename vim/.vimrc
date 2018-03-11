@@ -15,7 +15,7 @@ execute pathogen#helptags()
 
 " GUI:
 set guioptions=
-set linespace=6
+set linespace=4
 set guifont=Fira\ Code:h13
 
 " INDENTATION:
@@ -56,7 +56,6 @@ nnoremap vsp :vsplit
 nnoremap sp :split 
 nnoremap gt :bn<CR>
 nnoremap gp :bp<CR>
-nmap " :NERDTreeToggle<CR>25<C-w><Bar><C-w>l
 
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
@@ -67,17 +66,11 @@ let g:indent_guides_enable_on_vim_startup = 1
 
 " PYMODE:
 let g:pymode_syntax = 1
-let g:pymode_folding = 1
+let g:pymode_folding = 0
 let g:pymode_options_max_line_length = 79
 
 let g:pymode_lint = 0
 let g:pymode_syntax_indent_errors = 0
-
-" augroup unset_folding_in_insert_mode
-" 	autocmd!
-" 	autocmd InsertEnter *.py setlocal foldmethod=marker
-" 	autocmd InsertLeave *.py setlocal foldmethod=expr
-" augroup END
 
 " COMPLETOR:
 let g:completor_clang_binary = '/usr/bin/clang'
@@ -92,8 +85,6 @@ let NERDTreeIgnore=['\.pyc$', '\.pyo$', '__pycache__$', '\.swp$', '.DS_Store$', 
 let NERDTreeWinSize=25
 let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
-autocmd VimEnter * NERDTree
-autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " BUFFERLINE:
 let g:bufferline_echo = 0
