@@ -1,11 +1,17 @@
 #!/bin/bash
 
 CWD=$(pwd)
+NOW=$(date +%Y%m%d%H%M%S)
 
 echo ""
 echo "Installing Vim environment"
 
 # INSTALL .VIMRC
+if [ -f ~/.vimrc ]; then
+	mv ~/.vimrc ~/BACKUP_vimrc_${NOW}
+	echo "    Moved previous '.vimrc' to ~/BACKUP_vimrc_${NOW}"
+fi
+
 cp ./.vimrc ~/.vimrc
 echo "    Installed .vimrc config file"
 
@@ -16,6 +22,11 @@ echo "    Installed Vim snippets"
 echo ""
 
 # INSTALL PLUGINS
+if [ -d ~/.vim ]; then
+	mv ~/.vim ~/BACKUP_vim_${NOW}
+	echo "    Moved previous '.vim/' to ~/BACKUP_vim_${NOW}"
+fi
+
 # --- Pathogen
 echo "    Installing Pathogen"
 echo "        Downloading and installing..."
