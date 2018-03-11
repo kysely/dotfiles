@@ -1,0 +1,2 @@
+rm ~/BACKUP_vimrc_*
+rm -rf ~/BACKUP_vim_*
