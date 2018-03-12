@@ -1,0 +1,18 @@
+#!/bin/bash
+
+CWD=$(pwd)
+NOW=$(date +%Y%m%d%H%M%S)
+
+echo ""
+echo "Installing Emacs environment"
+
+# INSTALL INIT.EL
+if [ -d ~/.emacs.d/ ]; then
+	mv ~/.emacs.d ~/BACKUP_emacs.d_${NOW}
+	echo "    Moved previous '.emacs.d' directory to ~/BACKUP_emacs.d_${NOW}"
+fi
+
+mkdir -p ~/.emacs.d
+cp ./init.el ~/.emacs.d/init.el
+echo "    Installed init.el config file"
+
