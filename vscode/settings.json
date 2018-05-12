@@ -1,12 +1,13 @@
 // Place your settings in this file to overwrite the default settings
 {
     "editor.fontSize": 13,
-    "editor.lineHeight": 23,
-    "editor.fontFamily": "'Fira Mono', Menlo, Monaco, 'Courier New', monospace",
+    "editor.lineHeight": 22,
+    "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontLigatures": true,
     "editor.renderWhitespace": "none",
     "editor.renderIndentGuides": true,
     "editor.rulers": [
-        88
+        79
     ],
     "editor.tokenColorCustomizations": {
         "textMateRules": [
@@ -20,6 +21,7 @@
                 ],
                 "settings": {
                     "foreground": "#777a7e"
+                    // "foreground": "#5c6573"
                 }
             }
         ]
@@ -36,18 +38,23 @@
         "**/.DS_Store": true,
         "**/__pycache__": true,
         "**/.cache": true,
+        "**/.benchmarks": true,
     },
     "telemetry.enableTelemetry": false,
     "window.zoomLevel": 0,
-    "workbench.colorTheme": "Boxy Tomorrow",
+    "workbench.colorTheme": "Atom One Dark",
     "extensions.ignoreRecommendations": false,
     "editor.minimap.enabled": false,
     "workbench.sideBar.location": "left",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.visible": true,
     "workbench.colorCustomizations": {
-        "editorRuler.foreground": "#2a2b2c",
-        "editorIndentGuide.background": "#2a2b2c"
+        // "editorRuler.foreground": "#2a2b2c",
+        // "editorIndentGuide.background": "#2a2b2c"
+        "editorRuler.foreground": "#343d4a",
+        "editorIndentGuide.background": "#343d4a"
+        // "editorRuler.foreground": "#e1e4e8",
+        // "editorIndentGuide.background": "#e1e4e8"
     },
     "editor.multiCursorModifier": "alt",
     "vim.insertModeKeyBindings": [
@@ -59,4 +66,9 @@
             "after": ["<Esc>"]
         }
     ],
+    "files.associations": {
+        "*.pyx": "python"
+    },
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.iconTheme": "file-icons",
 }

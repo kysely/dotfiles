@@ -55,5 +55,9 @@
     {
         "key": "shift+alt+cmd+e",
         "command": "workbench.files.action.focusFilesExplorer"
+    },
+    {
+        "key": "shift+cmd+g shift+cmd+t",
+        "command": "workbench.action.terminal.focusNext"
     }
 ]

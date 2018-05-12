@@ -3,12 +3,12 @@
 
 (setq package-enable-at-startup nil)
 
-; (add-to-list 'package-archives 
-;   '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives 
+  '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives 
   '("melpa" . "http://melpa.org/packages/"))
-; (add-to-list 'package-archives 
-;   '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives 
+  '("melpa-stable" . "http://stable.melpa.org/packages/"))
 
 ;; INSTALL PACKAGE MANAGER
 (unless (package-installed-p 'use-package)
@@ -19,6 +19,11 @@
   (require 'use-package))
 
 ;; ENSURE ALL PACKAGES
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package evil
   :ensure t
   :config
@@ -55,10 +60,29 @@
   (setq highlight-indent-guides-method 'character)
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 
-(use-package challenger-deep-theme
+(use-package highlight-numbers
   :ensure t
   :config
-  (load-theme 'challenger-deep t))
+  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+
+(use-package elpy
+  :ensure t
+  :config
+  (elpy-enable))
+
+(use-package haskell-mode
+  :ensure t)
+
+; (use-package challenger-deep-theme
+;   :ensure t
+;   :config
+;   (load-theme 'challenger-deep t))
+
+(use-package atom-one-dark-theme
+  :ensure t
+  :config
+  (load-theme 'atom-one-dark t))
+
 
 ;; SET A NICER FONT
 (add-to-list 'default-frame-alist '(font . "Fira Code-13"))
