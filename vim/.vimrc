@@ -9,7 +9,7 @@ set noshowmode
 set splitright
 set nocompatible
 set laststatus=2
-set clipboard=unnamed
+set clipboard=unnamedplus
 execute pathogen#infect()
 execute pathogen#helptags()
 
