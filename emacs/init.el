@@ -85,6 +85,7 @@
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
+  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (next-buffer)))
   (key-chord-mode 1))
 
 (use-package monokai-theme
