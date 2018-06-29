@@ -24,6 +24,32 @@
   :config
   (exec-path-from-shell-initialize))
 
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :commands helm-mode
+  :config
+  (helm-mode 1)
+  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-autoresize-mode t)
+  (setq helm-buffer-max-length 40))
+
+(use-package highlight-numbers
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+
+(use-package cider
+  :ensure t)
+
+(use-package magit
+  :ensure t
+  :config
+  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status))))
+
+(use-package haskell-mode
+  :ensure t)
+
 (use-package evil
   :ensure t
   :config
@@ -36,62 +62,44 @@
   (evil-mode t)
 
   (use-package evil-indent-textobject
-    :ensure t))
+    :ensure t)
+
+  (use-package evil-commentary
+    :ensure t
+    :config
+    (evil-commentary-mode))
+
+  (use-package evil-magit
+    :ensure t
+    :config
+    (setq evil-magit-state 'normal)))
+
+(defun open-terminal ()
+  (split-window-horizontally)
+  (next-multiframe-window)
+  (eshell))
 
 (use-package key-chord
   :ensure t
   :config
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+  (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
   (key-chord-mode 1))
 
-(use-package helm
-  :ensure t
-  :diminish helm-mode
-  :commands helm-mode
-  :config
-  (helm-mode 1)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-autoresize-mode t)
-  (setq helm-buffer-max-length 40))
-
-(use-package highlight-indent-guides
-  :ensure t
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-
-(use-package highlight-numbers
-  :ensure t
-  :config
-  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
-
-(use-package elpy
-  :ensure t
-  :config
-  (elpy-enable))
-
-(use-package haskell-mode
-  :ensure t)
-
-; (use-package challenger-deep-theme
-;   :ensure t
-;   :config
-;   (load-theme 'challenger-deep t))
-
-(use-package atom-one-dark-theme
-  :ensure t
-  :config
-  (load-theme 'atom-one-dark t))
-
+(use-package monokai-theme
+ :ensure t
+ :config
+ (load-theme 'monokai t))
 
 ;; SET A NICER FONT
-(add-to-list 'default-frame-alist '(font . "Fira Code-13"))
-(set-face-attribute 'default t :font "Fira Code-13")
-(setq-default line-spacing 4)
+(add-to-list 'default-frame-alist '(font . "Fira Code-14:weight=Light"))
+(set-face-attribute 'default t :font "Fira Code-14")
+(setq-default line-spacing 6)
 
 ;; SETTINGS
-(cd "/Users/radek/Library/Mobile Documents/com~apple~CloudDocs/Radek HD/Work/PROJECTS")
+(cd "/Users/radek/Documents/Work/PROJECTS")
 (setq inhibit-startup-message t)
+(setq ring-bell-function 'ignore)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -100,9 +108,9 @@
 (setq tab-width 4)
 (global-hl-line-mode 1)
 (global-linum-mode t)
+(desktop-save-mode 1)
 
 ;; Since a lot of special characters are written using Alt (Option) key,
 ;; let's make Fn key a meta key instead
 (setq mac-function-modifier 'meta)
 (setq mac-option-modifier nil)
-
