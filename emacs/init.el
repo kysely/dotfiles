@@ -24,15 +24,15 @@
   :config
   (exec-path-from-shell-initialize))
 
-(use-package helm
+(use-package ivy
   :ensure t
-  :diminish helm-mode
-  :commands helm-mode
   :config
-  (helm-mode 1)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-autoresize-mode t)
-  (setq helm-buffer-max-length 40))
+  (ivy-mode 1)
+
+  (use-package counsel
+	:ensure t
+	:config
+	(counsel-mode 1)))
 
 (use-package highlight-numbers
   :ensure t
@@ -100,12 +100,12 @@
 (cd "/Users/radek/Documents/Work/PROJECTS")
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
+(setq tab-width 4)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (show-paren-mode 1)
 (column-number-mode t)
-(setq tab-width 4)
 (global-hl-line-mode 1)
 (global-linum-mode t)
 (desktop-save-mode 1)
