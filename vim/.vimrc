@@ -56,6 +56,7 @@ nnoremap vsp :vsplit
 nnoremap sp :split 
 nnoremap gt :bn<CR>
 nnoremap gp :bp<CR>
+tnoremap <Esc> <C-\><C-n>
 
 " SNIPPETS:
 imap ,doc """<Esc>o"""<Esc>ka
