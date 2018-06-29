@@ -79,13 +79,22 @@
   (next-multiframe-window)
   (eshell))
 
+;; `advanced-next-buffer` fun taken from https://stackoverflow.com/a/14511461/7699136
+(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*" "*eshell*" "*ansi-term*" "*Compile-Log*"))
+(defun advanced-next-buffer ()
+  "next-buffer that skips certain buffers"
+  (interactive)
+  (next-buffer)
+  (while (member (buffer-name) skippable-buffers)
+    (next-buffer)))
+
 (use-package key-chord
   :ensure t
   :config
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
-  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (next-buffer)))
+  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
   (key-chord-mode 1))
 
 (use-package monokai-theme
