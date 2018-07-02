@@ -65,6 +65,16 @@
 (use-package haskell-mode
   :ensure t)
 
+(use-package dtrt-indent
+  :ensure t
+  :config
+  (dtrt-indent-mode 1))
+
+(use-package autopair
+  :ensure t
+  :config
+  (autopair-global-mode 1))
+
 (use-package evil
   :ensure t
   :config
