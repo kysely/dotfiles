@@ -18,6 +18,21 @@
 (eval-when-compile
   (require 'use-package))
 
+;; CUSTOM FUNCTIONS
+(defun open-terminal ()
+  (split-window-horizontally)
+  (next-multiframe-window)
+  (eshell))
+
+(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*" "*eshell*" "*ansi-term*" "*Compile-Log*"))
+
+(defun advanced-next-buffer ()
+  "next-buffer that skips certain buffers. Taken from https://stackoverflow.com/a/14511461/7699136"
+  (interactive)
+  (next-buffer)
+  (while (member (buffer-name) skippable-buffers)
+    (next-buffer)))
+
 ;; ENSURE ALL PACKAGES
 (use-package exec-path-from-shell
   :ensure t
@@ -30,9 +45,9 @@
   (ivy-mode 1)
 
   (use-package counsel
-	:ensure t
-	:config
-	(counsel-mode 1)))
+    :ensure t
+    :config
+    (counsel-mode 1)))
 
 (use-package highlight-numbers
   :ensure t
@@ -74,20 +89,6 @@
     :config
     (setq evil-magit-state 'normal)))
 
-(defun open-terminal ()
-  (split-window-horizontally)
-  (next-multiframe-window)
-  (eshell))
-
-;; `advanced-next-buffer` fun taken from https://stackoverflow.com/a/14511461/7699136
-(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*" "*eshell*" "*ansi-term*" "*Compile-Log*"))
-(defun advanced-next-buffer ()
-  "next-buffer that skips certain buffers"
-  (interactive)
-  (next-buffer)
-  (while (member (buffer-name) skippable-buffers)
-    (next-buffer)))
-
 (use-package key-chord
   :ensure t
   :config
@@ -101,19 +102,19 @@
   :ensure t
   :config
   (setq linum-relative-format "  %3s  ")
-  (linum-relative-global-mode))
+  (linum-relative-global-mode 1))
 
 (use-package monokai-theme
  :ensure t
  :config
- (load-theme 'monokai t))
+ (load-theme 'monokai 1))
 
 ;; SET A NICER FONT
 (add-to-list 'default-frame-alist '(font . "Fira Code-14:weight=Light"))
 (set-face-attribute 'default t :font "Fira Code-14")
 (setq-default line-spacing 6)
 
-;; SETTINGS
+;; GLOBAL SETTINGS
 (cd "/Users/radek/Documents/Work/PROJECTS")
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
@@ -122,7 +123,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (show-paren-mode 1)
-(column-number-mode t)
+(column-number-mode 1)
 (global-hl-line-mode 1)
 (desktop-save-mode 1)
 
