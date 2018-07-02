@@ -128,6 +128,7 @@
 (cd "/Users/radek/Documents/Work/PROJECTS")
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
+(setq make-backup-files nil)
 (setq tab-width 4)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
