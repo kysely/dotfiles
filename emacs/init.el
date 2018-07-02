@@ -57,6 +57,13 @@
 (use-package cider
   :ensure t)
 
+(use-package company
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode)
+  (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
+  (define-key company-active-map [tab] 'company-select-next-or-abort))
+
 (use-package magit
   :ensure t
   :config
