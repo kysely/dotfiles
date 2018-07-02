@@ -60,6 +60,9 @@
 (use-package company
   :ensure t
   :config
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.1)
+  (setq company-tooltip-idle-delay 0.1)
   (add-hook 'after-init-hook 'global-company-mode)
   (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
   (define-key company-active-map [tab] 'company-select-next-or-abort))
