@@ -97,6 +97,12 @@
   (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
   (key-chord-mode 1))
 
+(use-package linum-relative
+  :ensure t
+  :config
+  (setq linum-relative-format "  %3s  ")
+  (linum-relative-global-mode))
+
 (use-package monokai-theme
  :ensure t
  :config
@@ -118,7 +124,6 @@
 (show-paren-mode 1)
 (column-number-mode t)
 (global-hl-line-mode 1)
-(global-linum-mode t)
 (desktop-save-mode 1)
 
 ;; Since a lot of special characters are written using Alt (Option) key,
