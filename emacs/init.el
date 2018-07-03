@@ -70,7 +70,12 @@
 (use-package magit
   :ensure t
   :config
-  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status))))
+  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
+
+  (use-package evil-magit
+    :ensure t
+    :config
+    (setq evil-magit-state 'normal)))
 
 (use-package haskell-mode
   :ensure t)
@@ -102,12 +107,7 @@
   (use-package evil-commentary
     :ensure t
     :config
-    (evil-commentary-mode))
-
-  (use-package evil-magit
-    :ensure t
-    :config
-    (setq evil-magit-state 'normal)))
+    (evil-commentary-mode)))
 
 (use-package key-chord
   :ensure t
@@ -124,10 +124,96 @@
   (setq linum-relative-format "  %3s  ")
   (linum-relative-global-mode 1))
 
+;; THEME AND POWERLINE
 (use-package monokai-theme
  :ensure t
  :config
  (load-theme 'monokai 1))
+
+(defface my-pl-segment1-active
+  '((t (:foreground "#BDB9B1" :background "#2F3029" :box nil)))
+  "Powerline first segment active face.")
+(defface my-pl-segment1-inactive
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "Powerline first segment inactive face.")
+(defface my-pl-segment2-active
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "Powerline second segment active face.")
+(defface my-pl-segment2-inactive
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "Powerline second segment inactive face.")
+(defface my-pl-segment3-active
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "Powerline third segment active face.")
+(defface my-pl-segment3-inactive
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "Powerline third segment inactive face.")
+
+(defun minimal-powerline-theme ()
+  "Set up my custom Powerline with Evil indicators."
+  (setq powerline-height 30)
+  (setq powerline-display-hud nil)
+  (setq powerline-default-separator (if (display-graphic-p) 'box nil))
+  (setq-default mode-line-format
+                '("%e"
+                  (:eval
+                   (let* ((active (powerline-selected-window-active))
+                          (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
+                          (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
+                          (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
+                          (separator-left (intern (format "powerline-%s-%s"
+                                                          (powerline-current-separator)
+                                                          (car powerline-default-separator-dir))))
+                          (separator-right (intern (format "powerline-%s-%s"
+                                                           (powerline-current-separator)
+                                                           (cdr powerline-default-separator-dir))))
+                          (lhs (list (let ((evil-face (powerline-evil-face)))
+                                       (if evil-mode
+                                           (powerline-raw (powerline-evil-tag) evil-face)
+                                         ))
+                                     (if evil-mode
+                                         (funcall separator-left (powerline-evil-face) seg1))
+                                     (powerline-buffer-id seg1 'l)
+                                     (powerline-raw "[%*]" seg1 'l)
+                                     (when (and (boundp 'which-func-mode) which-func-mode)
+                                       (powerline-raw which-func-format seg1 'l))
+                                     (powerline-raw " " seg1)
+                                     (funcall separator-left seg1 seg2)
+                                     (when (boundp 'erc-modified-channels-object)
+                                       (powerline-raw erc-modified-channels-object seg2 'l))
+                                     (powerline-major-mode seg2 'l)
+                                     (powerline-process seg2)
+                                     (powerline-minor-modes seg2 'l)
+                                     (powerline-narrow seg2 'l)
+                                     (powerline-raw " " seg2)
+                                     (funcall separator-left seg2 seg3)
+                                     (when (bound-and-true-p nyan-mode)
+                                       (powerline-raw (list (nyan-create)) seg3 'l))))
+                          (rhs (list (powerline-raw global-mode-string seg3 'r)
+                                     (powerline-vc seg3 'r)
+                                     (funcall separator-right seg3 seg2)
+                                     (unless window-system
+                                       (powerline-raw (char-to-string #xe0a1) seg2 'l))
+                                     (powerline-raw "%4l" seg2 'l)
+                                     (powerline-raw ":" seg2 'l)
+                                     (powerline-raw "%3c" seg2 'r)
+                                     (funcall separator-right seg2 seg1)
+                                     (powerline-raw " " seg1)
+                                     (powerline-raw "%6p" seg1 'r)
+                                     (when powerline-display-hud
+                                       (powerline-hud seg1 seg3)))))
+                     (concat (powerline-render lhs)
+                             (powerline-fill seg3 (powerline-width rhs))
+                             (powerline-render rhs)))))))
+
+(use-package powerline
+  :ensure t
+  :config
+
+  (use-package powerline-evil
+    :ensure t)
+
+  (minimal-powerline-theme))
 
 ;; SET A NICER FONT
 (add-to-list 'default-frame-alist '(font . "Fira Code-14:weight=Light"))
