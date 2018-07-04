@@ -131,24 +131,19 @@
  :config
  (load-theme 'monokai 1))
 
-(defface my-pl-segment1-active
+(defface my-pl-gui-style
+  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  "My custom GUI powerline face")
+(defface my-pl-active-gui-style
   '((t (:foreground "#BDB9B1" :background "#2F3029" :box nil)))
-  "Powerline first segment active face.")
-(defface my-pl-segment1-inactive
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
-  "Powerline first segment inactive face.")
-(defface my-pl-segment2-active
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
-  "Powerline second segment active face.")
-(defface my-pl-segment2-inactive
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
-  "Powerline second segment inactive face.")
-(defface my-pl-segment3-active
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
-  "Powerline third segment active face.")
-(defface my-pl-segment3-inactive
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
-  "Powerline third segment inactive face.")
+  "My custom GUI powerline face for the first segment")
+
+(defface my-pl-term-style
+  '((t (:foreground "#5E5E59" :background "#303030" :box nil)))
+  "My custom terminal powerline face")
+(defface my-pl-active-term-style
+  '((t (:foreground "#BDB9B1" :background "#303030" :box nil)))
+  "My custom terminal powerline face for the first segment")
 
 (defun minimal-powerline-theme ()
   "Set up my custom Powerline with Evil indicators."
@@ -159,9 +154,13 @@
                 '("%e"
                   (:eval
                    (let* ((active (powerline-selected-window-active))
-                          (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
-                          (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
-                          (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
+                          (gui (display-graphic-p))
+                          (seg1
+                            (if gui
+                              (if active 'my-pl-active-gui-style 'my-pl-gui-style)
+                              (if active 'my-pl-active-term-style 'my-pl-term-style)))
+                          (seg2 (if gui 'my-pl-gui-style 'my-pl-term-style))
+                          (seg3 (if gui 'my-pl-gui-style 'my-pl-term-style))
                           (separator-left (intern (format "powerline-%s-%s"
                                                           (powerline-current-separator)
                                                           (car powerline-default-separator-dir))))
