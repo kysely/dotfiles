@@ -22,6 +22,8 @@
 (defun open-terminal ()
   (split-window-horizontally)
   (next-multiframe-window)
+  (shrink-window-horizontally 100000)
+  (enlarge-window-horizontally 70)
   (eshell))
 
 (setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*" "*eshell*" "*ansi-term*" "*Compile-Log*"))
@@ -114,6 +116,7 @@
   :config
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
+  (key-chord-define evil-normal-state-map "tt" (lambda () (interactive) (next-multiframe-window)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
   (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
   (key-chord-mode 1))
