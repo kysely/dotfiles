@@ -85,7 +85,7 @@
 (use-package dtrt-indent
   :ensure t
   :config
-  (dtrt-indent-mode 1))
+  (dtrt-indent-global-mode 1))
 
 (use-package autopair
   :ensure t
@@ -227,7 +227,6 @@
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
 (setq make-backup-files nil)
-(setq tab-width 4)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
