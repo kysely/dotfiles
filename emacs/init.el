@@ -2,6 +2,7 @@
 (require 'package)
 
 (setq package-enable-at-startup nil)
+(setq debug-on-error t)
 
 (add-to-list 'package-archives 
   '("org" . "http://orgmode.org/elpa/"))
