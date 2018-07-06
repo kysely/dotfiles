@@ -218,8 +218,8 @@
   (minimal-powerline-theme))
 
 ;; SET A NICER FONT
-(add-to-list 'default-frame-alist '(font . "Fira Code-14:weight=Light"))
-(set-face-attribute 'default t :font "Fira Code-14")
+(add-to-list 'default-frame-alist '(font . "Fira Code-13:weight=Light"))
+(set-face-attribute 'default t :font "Fira Code-13")
 (setq-default line-spacing 6)
 
 ;; GLOBAL SETTINGS
