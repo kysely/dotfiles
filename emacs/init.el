@@ -127,6 +127,19 @@
   (setq linum-relative-format "  %3s  ")
   (linum-relative-global-mode 1))
 
+(use-package neotree
+  :ensure t
+  :config
+
+  (use-package all-the-icons
+    :ensure t
+    :config
+
+    (use-package all-the-icons-ivy
+      :ensure t)
+
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
+
 ;; THEME AND POWERLINE
 (use-package monokai-theme
  :ensure t
