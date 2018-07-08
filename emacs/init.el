@@ -274,7 +274,12 @@ can be still used throughout all Vim modes and on a different binding.
 (global-hl-line-mode 1)
 (desktop-save-mode 1)
 
-;; Since a lot of special characters are written using Alt (Option) key,
-;; let's make Fn key a meta key instead
-(setq mac-function-modifier 'meta)
+;; Since a lot of special characters on a Czech keyboard layout
+;; are written using Option key, let's keep it disabled for Emacs
+;; bindings and set Meta to Fn and Control keys (both for better UX).
 (setq mac-option-modifier nil)
+(setq mac-function-modifier 'meta)
+(setq mac-control-modifier 'meta)
+
+;; Also set Control to Cmd key to avoid broken pinky
+(setq mac-command-modifier 'control)
