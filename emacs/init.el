@@ -91,14 +91,11 @@ can be still used throughout all Vim modes and on a different binding.
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0.1)
   (setq company-tooltip-idle-delay 0.1)
-  (add-hook 'after-init-hook 'global-company-mode)
-  (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
-  (define-key company-active-map [tab] 'company-select-next-or-abort))
+  (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package magit
   :ensure t
   :config
-  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
 
   (use-package evil-magit
     :ensure t
@@ -140,9 +137,13 @@ can be still used throughout all Vim modes and on a different binding.
 (use-package key-chord
   :ensure t
   :config
+  (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
+  (define-key evil-normal-state-map (kbd "C-q") 'kill-emacs)
+  (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
+  (define-key company-active-map [tab] 'company-select-next-or-abort)
+  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
-  (key-chord-define evil-normal-state-map "tt" (lambda () (interactive) (next-multiframe-window)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
   (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
   (key-chord-mode 1))
