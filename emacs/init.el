@@ -137,6 +137,7 @@ can be still used throughout all Vim modes and on a different binding.
 (use-package key-chord
   :ensure t
   :config
+  (setq key-chord-two-keys-delay 0.3)
   (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
   (define-key evil-normal-state-map (kbd "C-q") 'kill-emacs)
   (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
