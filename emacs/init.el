@@ -61,6 +61,12 @@ can be still used throughout all Vim modes and on a different binding.
         (funcall action)
         (user-error "Direction not recognised"))))
 
+(defun confirm-kill-emacs (confirm)
+  "Ask before quitting Emacs"
+  (interactive "cQuit? (y/n) ")
+  (if (eq confirm 121)
+      (kill-emacs)))
+
 ;; ENSURE ALL PACKAGES
 (use-package exec-path-from-shell
   :ensure t
@@ -139,7 +145,9 @@ can be still used throughout all Vim modes and on a different binding.
   :config
   (setq key-chord-two-keys-delay 0.3)
   (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
-  (define-key evil-normal-state-map (kbd "C-q") 'kill-emacs)
+  (define-key evil-normal-state-map (kbd "C-q") 'confirm-kill-emacs)
+  (define-key evil-normal-state-map (kbd "C-h") 'ns-do-hide-emacs)
+  (define-key evil-normal-state-map (kbd "M-h") 'help-for-help)
   (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
   (define-key company-active-map [tab] 'company-select-next-or-abort)
   (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
