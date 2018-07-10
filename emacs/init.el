@@ -111,6 +111,13 @@ can be still used throughout all Vim modes and on a different binding.
 (use-package haskell-mode
   :ensure t)
 
+(use-package js2-mode
+  :ensure t
+  :config
+  (setq js2-strict-missing-semi-warning nil)
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
+
 (use-package dtrt-indent
   :ensure t
   :config
