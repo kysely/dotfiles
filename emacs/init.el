@@ -147,29 +147,6 @@ can be still used throughout all Vim modes and on a different binding.
     :config
     (evil-commentary-mode)))
 
-(use-package key-chord
-  :ensure t
-  :config
-  (setq key-chord-two-keys-delay 0.3)
-  (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
-  (define-key evil-normal-state-map (kbd "C-q") 'confirm-kill-emacs)
-  (define-key evil-normal-state-map (kbd "C-h") 'ns-do-hide-emacs)
-  (define-key evil-normal-state-map (kbd "M-h") 'help-for-help)
-  (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
-  (define-key company-active-map [tab] 'company-select-next-or-abort)
-  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
-  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-  (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
-  (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
-  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
-  (key-chord-mode 1))
-
-(use-package linum-relative
-  :ensure t
-  :config
-  (setq linum-relative-format "  %3s  ")
-  (linum-relative-global-mode 1))
-
 (use-package neotree
   :ensure t
   :config
@@ -182,6 +159,30 @@ can be still used throughout all Vim modes and on a different binding.
       :ensure t)
 
     (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
+
+(use-package key-chord
+  :ensure t
+  :config
+  (setq key-chord-two-keys-delay 0.3)
+  (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
+  (define-key evil-normal-state-map (kbd "C-q") 'confirm-kill-emacs)
+  (define-key evil-normal-state-map (kbd "C-h") 'ns-do-hide-emacs)
+  (define-key evil-normal-state-map (kbd "M-h") 'help-for-help)
+  (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
+  (define-key company-active-map [tab] 'company-select-next-or-abort)
+  (evil-define-key 'normal neotree-mode-map (kbd "o") 'neotree-enter)
+  (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
+  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+  (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
+  (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
+  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
+  (key-chord-mode 1))
+
+(use-package linum-relative
+  :ensure t
+  :config
+  (setq linum-relative-format "  %3s  ")
+  (linum-relative-global-mode 1))
 
 ;; THEME AND POWERLINE
 (use-package monokai-theme
