@@ -171,6 +171,7 @@ can be still used throughout all Vim modes and on a different binding.
   (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
   (define-key company-active-map [tab] 'company-select-next-or-abort)
   (evil-define-key 'normal neotree-mode-map (kbd "o") 'neotree-enter)
+  (evil-define-key 'normal neotree-mode-map (kbd "r") 'neotree-refresh)
   (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
