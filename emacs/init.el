@@ -26,14 +26,18 @@
   (enlarge-window-horizontally 70)
   (eshell))
 
-(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*" "*eshell*" "*ansi-term*" "*Compile-Log*"))
+(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Buffer List*"
+			  "*eshell*" "*ansi-term*" "*Compile-Log*"))
 
-(defun advanced-next-buffer ()
-  "next-buffer that skips certain buffers. Taken from https://stackoverflow.com/a/14511461/7699136"
+(defun advanced-switch-buffer (fn)
+  "Buffer switch that skips certain buffers.
+Can be used with both `next-buffer` and `previous-buffer`.
+
+Inspired by https://stackoverflow.com/a/14511461/7699136"
   (interactive)
-  (next-buffer)
+  (funcall fn)
   (while (member (buffer-name) skippable-buffers)
-    (next-buffer)))
+    (funcall fn)))
 
 (defvar bw-directions-list
   '((?h windmove-left)
@@ -176,7 +180,8 @@ can be still used throughout all Vim modes and on a different binding.
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
-  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-next-buffer)))
+  (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-switch-buffer 'next-buffer)))
+  (key-chord-define evil-normal-state-map "gp" (lambda () (interactive) (advanced-switch-buffer 'previous-buffer)))
   (key-chord-mode 1))
 
 (use-package linum-relative
