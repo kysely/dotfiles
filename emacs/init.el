@@ -191,16 +191,16 @@ can be still used throughout all Vim modes and on a different binding.
   (linum-relative-global-mode 1))
 
 ;; THEME AND POWERLINE
-(use-package monokai-theme
+(use-package doom-themes
  :ensure t
  :config
- (load-theme 'monokai 1))
+ (load-theme 'doom-molokai 1))
 
 (defface my-pl-gui-style
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  '((t (:foreground "#485359" :background "#252829" :box nil)))
   "My custom GUI powerline face")
 (defface my-pl-active-gui-style
-  '((t (:foreground "#BDB9B1" :background "#2F3029" :box nil)))
+  '((t (:foreground "#BDB9B1" :background "#252829" :box nil)))
   "My custom GUI powerline face for the first segment")
 
 (defface my-pl-term-style
