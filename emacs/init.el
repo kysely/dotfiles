@@ -178,10 +178,11 @@ can be still used throughout all Vim modes and on a different binding.
   (evil-define-key 'normal neotree-mode-map (kbd "r") 'neotree-refresh)
   (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+  (key-chord-define evil-insert-state-map "JK" 'evil-normal-state)
   (key-chord-define evil-normal-state-map "tr" (lambda () (interactive) (open-terminal)))
   (key-chord-define evil-normal-state-map "ls" (lambda () (interactive) (buffer-menu)))
   (key-chord-define evil-normal-state-map "gt" (lambda () (interactive) (advanced-switch-buffer 'next-buffer)))
-  (key-chord-define evil-normal-state-map "gp" (lambda () (interactive) (advanced-switch-buffer 'previous-buffer)))
+  (key-chord-define evil-normal-state-map "gz" (lambda () (interactive) (advanced-switch-buffer 'previous-buffer)))
   (key-chord-mode 1))
 
 (use-package linum-relative
