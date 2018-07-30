@@ -288,9 +288,12 @@ can be still used throughout all Vim modes and on a different binding.
 
 ;; GLOBAL SETTINGS
 (cd "/Users/radek/Documents/Work/PROJECTS")
-(setq inhibit-startup-message t)
-(setq ring-bell-function 'ignore)
-(setq make-backup-files nil)
+(setq inhibit-startup-message t
+      ring-bell-function 'ignore
+      make-backup-files nil
+      scroll-step 1
+      scroll-conservatively 10000)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
