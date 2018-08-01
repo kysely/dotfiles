@@ -97,6 +97,11 @@ can be still used throughout all Vim modes and on a different binding.
   :config
   (indent-guide-global-mode))
 
+(use-package column-enforce-mode
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'column-enforce-mode))
+
 (use-package cider
   :ensure t)
 
