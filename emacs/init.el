@@ -92,6 +92,11 @@ can be still used throughout all Vim modes and on a different binding.
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
+(use-package indent-guide
+  :ensure t
+  :config
+  (indent-guide-global-mode))
+
 (use-package cider
   :ensure t)
 
