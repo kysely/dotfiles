@@ -172,7 +172,8 @@ can be still used throughout all Vim modes and on a different binding.
     (use-package all-the-icons-ivy
       :ensure t)
 
-    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+    (setq neo-show-hidden-files t))
 
 (use-package key-chord
   :ensure t
