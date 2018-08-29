@@ -132,6 +132,15 @@ can be still used throughout all Vim modes and on a different binding.
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
 
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
+
+(use-package dockerfile-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+
 (use-package dtrt-indent
   :ensure t
   :config
