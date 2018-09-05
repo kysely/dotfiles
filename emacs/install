@@ -15,4 +15,23 @@ fi
 mkdir -p ~/.emacs.d
 cp ./init.el ~/.emacs.d/init.el
 echo "    Installed init.el config file"
+echo ""
 
+# Generic function for installing plugins from GitHub
+install_plugin() {
+	echo "    Installing ${1}"
+	echo "        Cloning..."
+
+	{
+		cd ~/.emacs.d/
+		git clone --quiet --recursive ${2}
+
+		echo "    Installed ${1}"
+	} || {
+		echo "    Couldn't install ${1}"
+	}
+
+	echo ""
+}
+
+install_plugin "Q Mode" https://github.com/psaris/q-mode.git

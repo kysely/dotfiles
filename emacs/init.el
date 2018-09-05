@@ -9,6 +9,7 @@
   '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives 
   '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'load-path "~/.emacs.d/q-mode")
 
 ;; INSTALL PACKAGE MANAGER
 (unless (package-installed-p 'use-package)
@@ -131,6 +132,9 @@ can be still used throughout all Vim modes and on a different binding.
   (setq js2-strict-missing-semi-warning nil)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
+
+(autoload 'q-mode "q-mode")
+(add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
 
 (use-package docker
   :ensure t
