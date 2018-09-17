@@ -152,6 +152,11 @@ can be still used throughout all Vim modes and on a different binding.
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown"))
 
+(use-package yaml-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+
 (use-package dtrt-indent
   :ensure t
   :config
