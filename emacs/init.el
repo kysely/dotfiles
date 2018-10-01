@@ -123,6 +123,14 @@ can be still used throughout all Vim modes and on a different binding.
     :config
     (setq evil-magit-state 'normal)))
 
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'find-file-hook
+    (lambda ()
+      (when (string= (file-name-extension buffer-file-name) "clj")
+      (rainbow-delimiters-mode 1)))))
+
 (use-package haskell-mode
   :ensure t)
 
