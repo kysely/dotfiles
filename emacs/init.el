@@ -233,6 +233,7 @@ can be still used throughout all Vim modes and on a different binding.
   :ensure t
   :config
   (setq linum-relative-format "  %3s  ")
+  (setq linum-relative-current-symbol "")
   (linum-relative-global-mode 1))
 
 ;; THEME AND POWERLINE
