@@ -343,7 +343,7 @@ can be still used throughout all Vim modes and on a different binding.
 (scroll-bar-mode -1)
 (show-paren-mode 1)
 (column-number-mode 1)
-(global-hl-line-mode 1)
+(global-hl-line-mode 0)
 (desktop-save-mode 1)
 
 ;; Since a lot of special characters on a Czech keyboard layout
