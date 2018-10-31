@@ -3,49 +3,23 @@
 CWD=$(pwd)
 NOW=$(date +%Y%m%d%H%M%S)
 
-echo ""
+echo "======================================================================"
 echo "Installing Vim environment"
 
-# INSTALL .VIMRC
+# BACKUP PREVIOUS CONFIGURATION
 if [ -f ~/.vimrc ]; then
 	mv ~/.vimrc ~/BACKUP_vimrc_${NOW}
 	echo "    Moved previous '.vimrc' to ~/BACKUP_vimrc_${NOW}"
 fi
-
-cp ./.vimrc ~/.vimrc
-echo "    Installed .vimrc config file"
-
-# INSTALL PLUGINS
 if [ -d ~/.vim ]; then
-	mv ~/.vim ~/BACKUP_vim_${NOW}
-	echo "    Moved previous '.vim/' to ~/BACKUP_vim_${NOW}"
+	mv ~/.vim ~/BACKUP_dotvim_${NOW}
+	echo "    Moved previous '.vim/' to ~/BACKUP_dotvim_${NOW}"
 fi
 
-# --- Pathogen
-echo "    Installing Pathogen"
-echo "        Downloading and installing..."
-mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-
-echo "    Installed Pathogen"
-echo ""
-
-# Generic function for installing plugins using Pathogen
-install_plugin() {
-	echo "    Installing ${1}"
-	echo "        Cloning..."
-
-	{
-		cd ~/.vim/bundle/
-		git clone --quiet --recursive ${2}
-
-		echo "    Installed ${1}"
-	} || {
-		echo "    Couldn't install ${1}"
-	}
-
-	echo ""
-}
+# INSTALL .VIMRC
+cp ./.vimrc ~/.vimrc
+echo "    Installed .vimrc config file"
+echo "    ------------------------------------------------------------------"
 
 # Generic function for installing provided files
 install_files() {
@@ -62,34 +36,28 @@ install_files() {
 		echo "    Couldn't install ${1}"
 	}
 
-	echo ""
+	echo "    ------------------------------------------------------------------"
 
 }
 
-install_plugin "Python Mode" git://github.com/python-mode/python-mode.git
+# INSTALL PROVIDED FILES
 install_files "Better Python Syntax" ./syntax/python.vim ~/.vim/bundle/python-mode/syntax/
 install_files "Boxy Tomorrow" ./colors/boxy-tomorrow.vim ~/.vim/colors/
-install_plugin "NERDTree" git://github.com/scrooloose/nerdtree.git
-install_plugin "Commentary" git://github.com/tpope/vim-commentary.git
-install_plugin "Fugitive" git://github.com/tpope/vim-fugitive.git
-install_plugin "CtrlP" git://github.com/ctrlpvim/ctrlp.vim.git
-install_plugin "Bufferline" git://github.com/bling/vim-bufferline.git
-install_plugin "ConqueTerm" git://github.com/rosenfeld/conque-term.git
-install_plugin "Airline" git://github.com/vim-airline/vim-airline.git
-install_plugin "Airline Themes" git://github.com/vim-airline/vim-airline-themes.git
 
-# -- Completor
-if [ "$1" == "--completor" ]; then
-	echo "    Installing Completor"
-	echo "        Cloning..."
-	mkdir -p ~/.vim/pack/completor/start
-	cd ~/.vim/pack/completor/start
-	git clone -q git://github.com/maralla/completor.vim.git
+# INSTALL PLUG
+# for Vim
+echo "    Installing Plug"
+echo "        Downloading and installing for Vim..."
+curl -sfLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+echo "    Installed Plug for Vim"
 
-	echo "        Installing Jedi..."
-	python3 -m pip install jedi && pip3 install jedi
+# for NeoVim
+echo "        Downloading and installing for NeoVim..."
+curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+echo "    Installed Plug for NeoVim"
+echo "    ------------------------------------------------------------------"
 
-	echo "    Installed Completor"
-	echo ""
-fi
 
+echo "======================================================================"

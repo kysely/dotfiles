@@ -10,8 +10,19 @@ set splitright
 set nocompatible
 set laststatus=2
 set clipboard=unnamedplus
-execute pathogen#infect()
-execute pathogen#helptags()
+
+call plug#begin('~/.vim/plugged')
+  Plug 'python-mode/python-mode'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-fugitive'
+  Plug 'bling/vim-bufferline'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'katusk/vim-qkdb-syntax'
+  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+  Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+call plug#end()
 
 " GUI:
 set guioptions=

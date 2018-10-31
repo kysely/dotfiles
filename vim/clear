@@ -1,2 +1,2 @@
 rm ~/BACKUP_vimrc_*
-rm -rf ~/BACKUP_vim_*
+rm -rf ~/BACKUP_dotvim_*
