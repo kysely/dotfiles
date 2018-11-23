@@ -166,6 +166,9 @@ can be still used throughout all Vim modes and on a different binding.
   :config
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 
+(use-package tuareg
+  :ensure t)
+
 (use-package dtrt-indent
   :ensure t
   :config
