@@ -110,8 +110,8 @@ can be still used throughout all Vim modes and on a different binding.
   :ensure t
   :config
   (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.1)
-  (setq company-tooltip-idle-delay 0.1)
+  (setq company-idle-delay 0)
+  (setq company-tooltip-idle-delay 0)
   (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package magit
@@ -211,13 +211,16 @@ can be still used throughout all Vim modes and on a different binding.
 (use-package key-chord
   :ensure t
   :config
-  (setq key-chord-two-keys-delay 0.3)
+  (setq key-chord-one-key-delay 0.2)
+  (setq key-chord-two-keys-delay 0.1)
   (define-key evil-insert-state-map (kbd "C-w") 'better-windmove)
   (define-key evil-normal-state-map (kbd "C-q") 'confirm-kill-emacs)
   (define-key evil-normal-state-map (kbd "C-h") 'ns-do-hide-emacs)
   (define-key evil-normal-state-map (kbd "M-h") 'help-for-help)
   (define-key company-active-map (kbd "TAB") 'company-select-next-or-abort)
   (define-key company-active-map [tab] 'company-select-next-or-abort)
+  (define-key company-active-map (kbd "C-n") 'company-select-next-or-abort)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous-or-abort)
   (evil-define-key 'normal neotree-mode-map (kbd "o") 'neotree-enter)
   (evil-define-key 'normal neotree-mode-map (kbd "r") 'neotree-refresh)
   (global-set-key (kbd "C-g") (lambda () (interactive) (magit-status)))
