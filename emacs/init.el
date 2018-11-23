@@ -112,7 +112,8 @@ can be still used throughout all Vim modes and on a different binding.
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0)
   (setq company-tooltip-idle-delay 0)
-  (add-hook 'after-init-hook 'global-company-mode))
+  (add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'eshell-mode-hook (lambda () (company-mode -1)) 'append))
 
 (use-package magit
   :ensure t
