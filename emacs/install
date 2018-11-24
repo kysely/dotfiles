@@ -13,8 +13,8 @@ if [ -d ~/.emacs.d/ ]; then
 fi
 
 mkdir -p ~/.emacs.d
-cp ./init.el ~/.emacs.d/init.el
-echo "    Installed init.el config file"
+cp -r ./.emacs.d/* ~/.emacs.d/
+echo "    Installed .emacs.d/ directory"
 echo ""
 
 # Generic function for installing plugins from GitHub
