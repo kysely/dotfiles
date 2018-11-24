@@ -41,7 +41,6 @@ install_files() {
 }
 
 # INSTALL PROVIDED FILES
-install_files "Better Python Syntax" ./syntax/python.vim ~/.vim/bundle/python-mode/syntax/
 install_files "Boxy Tomorrow" ./colors/boxy-tomorrow.vim ~/.vim/colors/
 
 # INSTALL PLUG
