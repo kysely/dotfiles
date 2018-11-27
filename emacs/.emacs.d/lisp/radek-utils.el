@@ -33,6 +33,7 @@
   (setq company-idle-delay 0)
   (setq company-tooltip-idle-delay 0)
   (add-hook 'after-init-hook 'global-company-mode)
+  (add-to-list 'company-backends 'merlin-company-backend)
   (add-hook 'eshell-mode-hook (lambda () (company-mode -1)) 'append))
 
 ;; CODE UTILS ------------------------------------------------------------------

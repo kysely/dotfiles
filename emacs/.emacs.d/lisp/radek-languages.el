@@ -1,5 +1,10 @@
 (use-package tuareg                     ; OCaml
-  :ensure t)
+  :ensure t
+  :config
+  (use-package merlin
+    :ensure t
+    :config
+    (add-hook 'tuareg-mode-hook 'merlin-mode)))
 
 (use-package js2-mode                   ; JavaScript
   :ensure t
