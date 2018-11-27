@@ -41,11 +41,6 @@
   :config
   (dtrt-indent-global-mode 1))
 
-(use-package indent-guide               ; Add indent guides
-  :ensure t
-  :config
-  (indent-guide-global-mode))
-
 (use-package column-enforce-mode        ; Max line length
   :ensure t
   :config
