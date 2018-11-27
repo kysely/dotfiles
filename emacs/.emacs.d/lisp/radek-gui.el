@@ -1,7 +1,15 @@
 (use-package monokai-theme              ; Default theme
  :ensure t
  :config
- (load-theme 'monokai 1))
+ (setq
+  monokai-foreground     "#F2F3F7"
+  monokai-background     "#27292C"
+  monokai-highlight      "#4D4F52"
+  monokai-comments       "#595C61"
+  monokai-highlight-line "#2E3133"
+  monokai-line-number    "#595C61"
+  monokai-gray           "#2E3133")
+ (load-theme 'monokai t))
 
 (use-package dimmer                     ; Dim unfocused buffers
   :ensure t
@@ -17,10 +25,10 @@
 
 ;; MODE LINE (style & layout) --------------------------------------------------
 (defface my-pl-gui-style
-  '((t (:foreground "#5E5E59" :background "#2F3029" :box nil)))
+  '((t (:foreground "#595C61" :background "#2E3033" :box nil)))
   "My custom GUI powerline face")
 (defface my-pl-active-gui-style
-  '((t (:foreground "#BDB9B1" :background "#2F3029" :box nil)))
+  '((t (:foreground "#F2F3F7" :background "#2E3033" :box nil)))
   "My custom GUI powerline face for the first segment")
 
 (defface my-pl-term-style
