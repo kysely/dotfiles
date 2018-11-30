@@ -28,10 +28,10 @@
 
 (use-package pretty-fonts
   :config
-  ;; (pretty-fonts-add-hook 'prog-mode-hook pretty-fonts-fira-code-alist)
-  ;; (pretty-fonts-add-hook 'org-mode-hook  pretty-fonts-fira-code-alist)
+  (pretty-fonts-add-hook 'prog-mode-hook pretty-fonts-fira-code-alist)
+  (pretty-fonts-add-hook 'org-mode-hook  pretty-fonts-fira-code-alist)
 
-  ;; (pretty-fonts-set-fontsets-for-fira-code)
+  (pretty-fonts-set-fontsets-for-fira-code)
   (pretty-fonts-set-fontsets
    '(("fontawesome"                     ; All-the-icons fontsets
       ;;                         
