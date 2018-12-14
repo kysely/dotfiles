@@ -16,7 +16,7 @@ Inspired by https://stackoverflow.com/a/14511461/7699136"
   (split-window-horizontally)
   (next-multiframe-window)
   (shrink-window-horizontally 100000)
-  (enlarge-window-horizontally 70)
+  (enlarge-window-horizontally 100)
   (eshell))
 
 (defun confirm-kill-emacs (confirm)
