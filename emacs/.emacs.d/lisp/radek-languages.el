@@ -6,6 +6,9 @@
     :config
     (add-hook 'tuareg-mode-hook 'merlin-mode)))
 
+(use-package rust-mode                  ; Rust
+  :ensure t)
+
 (use-package js2-mode                   ; JavaScript
   :ensure t
   :config
