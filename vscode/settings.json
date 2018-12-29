@@ -2,6 +2,7 @@
 {
     "editor.fontSize": 13,
     "editor.lineHeight": 22,
+    "editor.fontWeight": "400",
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.fontLigatures": true,
     "editor.renderWhitespace": "none",
@@ -42,20 +43,12 @@
     },
     "telemetry.enableTelemetry": false,
     "window.zoomLevel": 0,
-    "workbench.colorTheme": "Atom One Dark",
+    "workbench.colorTheme": "Monokai Pro",
     "extensions.ignoreRecommendations": false,
     "editor.minimap.enabled": false,
     "workbench.sideBar.location": "left",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.visible": true,
-    "workbench.colorCustomizations": {
-        // "editorRuler.foreground": "#2a2b2c",
-        // "editorIndentGuide.background": "#2a2b2c"
-        "editorRuler.foreground": "#343d4a",
-        "editorIndentGuide.background": "#343d4a"
-        // "editorRuler.foreground": "#e1e4e8",
-        // "editorIndentGuide.background": "#e1e4e8"
-    },
     "editor.multiCursorModifier": "alt",
     "vim.insertModeKeyBindings": [
         {
@@ -70,5 +63,6 @@
         "*.pyx": "python"
     },
     "workbench.startupEditor": "newUntitledFile",
-    "workbench.iconTheme": "file-icons",
+    "editor.renderControlCharacters": false,
+    "breadcrumbs.enabled": false,
 }
