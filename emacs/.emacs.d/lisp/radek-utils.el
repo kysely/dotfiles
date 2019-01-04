@@ -21,7 +21,7 @@
 (use-package linum-relative             ; Relative line numbers
   :ensure t
   :config
-  (setq linum-relative-format "  %3s  ")
+  (setq linum-relative-format "   %3s  ")
   (setq linum-relative-current-symbol "")
   (linum-relative-global-mode 1))
 
