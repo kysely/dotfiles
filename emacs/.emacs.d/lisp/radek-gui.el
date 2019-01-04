@@ -11,11 +11,6 @@
   monokai-gray           "#2E3133")
  (load-theme 'monokai t))
 
-(use-package dimmer                     ; Dim unfocused buffers
-  :ensure t
-  :init (dimmer-mode)
-  :config (setq-default dimmer-fraction 0.5))
-
 (use-package dash-functional            ; Dependency for pretty-fonts & -eshell
   :ensure t)
 
