@@ -98,8 +98,8 @@
       :ensure t)
 
     (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
-    (setq neo-window-width 32)
-    (setq neo-show-hidden-files t))
+  (setq neo-window-width 32)
+  (setq neo-show-hidden-files t))
 
 
 (provide 'radek-utils)
