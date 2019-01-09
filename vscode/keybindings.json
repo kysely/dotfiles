@@ -28,10 +28,6 @@
         "command": "-editor.action.outdentLines",
         "when": "editorTextFocus && !editorReadonly"
     },
-    // {
-    //     "key": "shift+alt+cmd+e",
-    //     "command": "workbench.files.action.focusFilesExplorer"
-    // },
     {
         "key": "shift+cmd+g shift+cmd+t",
         "command": "workbench.action.terminal.focusNext"
@@ -64,5 +60,15 @@
     {
         "key": "cmd+x shift+0",
         "command": "workbench.action.closeActiveEditor",
+    },
+    {
+        "key": "cmd+r",
+        "command": "editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    {
+        "key": "alt+f12",
+        "command": "-editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
 ]
