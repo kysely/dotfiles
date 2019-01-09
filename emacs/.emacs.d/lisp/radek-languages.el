@@ -7,7 +7,13 @@
     (add-hook 'tuareg-mode-hook 'merlin-mode)))
 
 (use-package rust-mode                  ; Rust
-  :ensure t)
+  :ensure t
+  :config
+  (use-package racer
+    :ensure t
+    :config
+    (add-hook 'rust-mode-hook #'racer-mode)
+    (add-hook 'racer-mode-hook #'eldoc-mode)))
 
 (use-package js2-mode                   ; JavaScript
   :ensure t
