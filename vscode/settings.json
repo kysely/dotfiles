@@ -42,6 +42,7 @@
         "**/.benchmarks": true,
     },
     "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
     "window.zoomLevel": 0,
     "workbench.colorTheme": "Monokai Pro",
     "extensions.ignoreRecommendations": false,
