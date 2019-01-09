@@ -9,10 +9,6 @@
         "command": "workbench.action.terminal.toggleTerminal"
     },
     {
-        "key": "ctrl+shift+[Backslash]",
-        "command": "-workbench.action.terminal.toggleTerminal"
-    },
-    {
         "key": "cmd+[BracketRight]",
         "command": "editor.action.indentLines",
         "when": "editorTextFocus && !editorReadonly"
@@ -32,32 +28,41 @@
         "command": "-editor.action.outdentLines",
         "when": "editorTextFocus && !editorReadonly"
     },
-    {
-        "key": "ctrl+cmd+up",
-        "command": "editor.action.moveLinesUpAction",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "alt+up",
-        "command": "-editor.action.moveLinesUpAction",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "ctrl+cmd+down",
-        "command": "editor.action.moveLinesDownAction",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "alt+down",
-        "command": "-editor.action.moveLinesDownAction",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
-        "key": "shift+alt+cmd+e",
-        "command": "workbench.files.action.focusFilesExplorer"
-    },
+    // {
+    //     "key": "shift+alt+cmd+e",
+    //     "command": "workbench.files.action.focusFilesExplorer"
+    // },
     {
         "key": "shift+cmd+g shift+cmd+t",
         "command": "workbench.action.terminal.focusNext"
-    }
+    },
+    // split windows
+    {
+        "key": "cmd+x shift+3",
+        "command": "workbench.action.splitEditor"
+    },
+    {
+        "key": "cmd+h",
+        "command": "workbench.action.navigateLeft"
+    },
+    {
+        "key": "cmd+l",
+        "command": "workbench.action.navigateRight"
+    },
+    {
+        "key": "cmd+k",
+        "command": "workbench.action.navigateUp"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.navigateDown"
+    },
+    {
+        "key": "cmd+w",
+        "command": "extension.vim_ctrl+w"
+    },
+    {
+        "key": "cmd+x shift+0",
+        "command": "workbench.action.closeActiveEditor",
+    },
 ]
