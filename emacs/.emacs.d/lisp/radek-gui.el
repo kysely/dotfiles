@@ -26,7 +26,7 @@
   :ensure t)
 
 ;; FONT STYLE ------------------------------------------------------------------
-(setq-default line-spacing 8)
+(setq-default line-spacing 5)
 (set-face-attribute 'default nil
                     :family "Fira Code"
                     :height 130
