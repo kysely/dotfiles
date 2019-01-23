@@ -71,4 +71,20 @@
         "command": "-editor.action.revealDefinition",
         "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
+    {
+        "key": "cmd+x cmd+f",
+        "command": "workbench.action.quickOpen"
+    },
+    {
+        "key": "cmd+p",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+x",
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "shift+cmd+p",
+        "command": "-workbench.action.showCommands"
+    },
 ]
