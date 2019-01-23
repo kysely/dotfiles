@@ -47,10 +47,16 @@
   :config
   (add-hook 'prog-mode-hook 'column-enforce-mode))
 
-(use-package autopair                   ; Automatic braces
+(use-package paredit                    ; Productive parens editing
   :ensure t
   :config
-  (autopair-global-mode 1))
+
+  (use-package evil-paredit
+    :ensure t
+    :config
+    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+    (add-hook 'clojure-mode-hook          #'enable-paredit-mode)))
+
 
 (use-package highlight-numbers          ; Highlighting numbers
   :ensure t
