@@ -1,14 +1,16 @@
-// Place your settings in this file to overwrite the default settings
 {
-    "editor.fontSize": 13,
-    "editor.lineHeight": 22,
+    // Code editor settings
+    "editor.lineHeight": 23,
     "editor.fontWeight": "400",
-    "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.fontLigatures": true,
+    "editor.fontSize": 13.5,
+    "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.renderWhitespace": "none",
-    "editor.renderIndentGuides": true,
+    "editor.renderIndentGuides": false,
+    "editor.minimap.enabled": false,
+    "editor.multiCursorModifier": "alt",
     "editor.rulers": [
-        79
+        80
     ],
     "editor.tokenColorCustomizations": {
         "textMateRules": [
@@ -22,35 +24,11 @@
                 ],
                 "settings": {
                     "foreground": "#777a7e"
-                    // "foreground": "#5c6573"
                 }
             }
         ]
     },
-    "git.enabled": true,
-    "terminal.integrated.fontSize": 13,
-    "terminal.integrated.lineHeight": 1.5,
-    "terminal.external.osxExec": "iTerm.app",
-    "terminal.integrated.scrollback": 5000,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/__pycache__": true,
-        "**/.cache": true,
-        "**/.benchmarks": true,
-    },
-    "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false,
-    "window.zoomLevel": 0,
-    "workbench.colorTheme": "Monokai Pro",
-    "extensions.ignoreRecommendations": false,
-    "editor.minimap.enabled": true,
-    "workbench.sideBar.location": "left",
-    "workbench.activityBar.visible": false,
-    "workbench.statusBar.visible": true,
-    "editor.multiCursorModifier": "alt",
+    "vim.useSystemClipboard": true,
     "vim.insertModeKeyBindings": [
         {
             "before": ["j","k"],
@@ -60,10 +38,38 @@
             "after": ["<Esc>"]
         }
     ],
+    // Terminal settings
+    "terminal.integrated.fontSize": 13.5,
+    "terminal.integrated.lineHeight": 1.7,
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.scrollback": 5000,
+    // General
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/__pycache__": true,
+        "**/.cache": true,
+        "**/.benchmarks": true,
+    },
     "files.associations": {
         "*.pyx": "python"
     },
-    "workbench.startupEditor": "newUntitledFile",
+    "git.enabled": true,
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+    "window.zoomLevel": 0,
+    "extensions.ignoreRecommendations": false,
     "editor.renderControlCharacters": false,
-    "breadcrumbs.enabled": false,
+    "workbench.colorTheme": "Monokai Pro",
+    "workbench.iconTheme": "file-icons",
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.feedback.visible": false,
+    "calva.autoConnect": false,
+    "gitlens.currentLine.enabled": false,
+    "gitlens.advanced.telemetry.enabled": false,
+    "gitlens.codeLens.authors.enabled": false,
+    "gitlens.statusBar.enabled": false,
 }
