@@ -22,6 +22,12 @@
        monokai-yellow         "#FFD866")
  (load-theme 'monokai t))
 
+(use-package dimmer                     ; Dim inactive buffers
+  :ensure t
+  :config
+  (setq dimmer-fraction 0.4)
+  (dimmer-mode))
+
 (use-package dash-functional            ; Dependency for pretty-fonts & -eshell
   :ensure t)
 
