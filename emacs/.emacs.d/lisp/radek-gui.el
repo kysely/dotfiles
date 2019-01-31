@@ -22,6 +22,11 @@
        monokai-yellow         "#FFD866")
  (load-theme 'monokai t))
 
+(use-package rainbow-identifiers        ; Semantic syntax highlighting
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
+
 (use-package dimmer                     ; Dim inactive buffers
   :ensure t
   :config
