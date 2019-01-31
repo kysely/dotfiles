@@ -38,19 +38,19 @@
         "command": "workbench.action.splitEditor"
     },
     {
-        "key": "cmd+h",
+        "key": "shift+cmd+h",
         "command": "workbench.action.navigateLeft"
     },
     {
-        "key": "cmd+l",
+        "key": "shift+cmd+l",
         "command": "workbench.action.navigateRight"
     },
     {
-        "key": "cmd+k",
+        "key": "shift+cmd+k",
         "command": "workbench.action.navigateUp"
     },
     {
-        "key": "cmd+j",
+        "key": "shift+cmd+j",
         "command": "workbench.action.navigateDown"
     },
     {
