@@ -87,4 +87,14 @@
         "key": "shift+cmd+p",
         "command": "-workbench.action.showCommands"
     },
+    {
+        "key": "cmd+f",
+        "command": "editor.fold",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+g",
+        "command": "editor.unfold",
+        "when": "editorTextFocus"
+    }
 ]
