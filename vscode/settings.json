@@ -23,10 +23,14 @@
                     "comment.line"
                 ],
                 "settings": {
-                    "foreground": "#777a7e"
+                    "foreground": "#5B595C"
                 }
             }
         ]
+    },
+    "workbench.colorCustomizations": {
+        "editorRuler.foreground": "#353436",
+        "editorIndentGuide.background": "#353436"
     },
     "vim.useSystemClipboard": true,
     "vim.insertModeKeyBindings": [
