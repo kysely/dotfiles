@@ -32,6 +32,7 @@
         "editorRuler.foreground": "#353436",
         "editorIndentGuide.background": "#353436"
     },
+    "scm.diffDecorations": "none",
     "vim.useSystemClipboard": true,
     "vim.insertModeKeyBindings": [
         {
