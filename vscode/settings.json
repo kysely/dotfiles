@@ -1,9 +1,8 @@
 {
     // Code editor settings
-    "editor.lineHeight": 23,
+    "editor.lineHeight": 22,
     "editor.fontWeight": "400",
     "editor.fontLigatures": true,
-    "editor.fontSize": 13.5,
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.renderWhitespace": "none",
     "editor.lineNumbers": "relative",
@@ -46,11 +45,12 @@
         }
     ],
     // Terminal settings
-    "terminal.integrated.fontSize": 13.5,
+    "terminal.integrated.fontSize": 12,
     "terminal.integrated.lineHeight": 1.7,
     "terminal.external.osxExec": "iTerm.app",
     "terminal.integrated.scrollback": 5000,
     // General
+    "zenMode.hideStatusBar": false,
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -69,10 +69,11 @@
     "window.zoomLevel": 0,
     "extensions.ignoreRecommendations": false,
     "editor.renderControlCharacters": false,
-    "workbench.colorTheme": "Monokai Pro",
-    "workbench.iconTheme": "file-icons",
+    "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+    "workbench.iconTheme": "Monokai Pro (Filter Spectrum) Icons",
     "workbench.startupEditor": "newUntitledFile",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.feedback.visible": false,
     "calva.autoConnect": false,
+    "breadcrumbs.enabled": false,
 }
