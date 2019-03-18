@@ -73,8 +73,4 @@
     "workbench.activityBar.visible": false,
     "workbench.statusBar.feedback.visible": false,
     "calva.autoConnect": false,
-    "gitlens.currentLine.enabled": false,
-    "gitlens.advanced.telemetry.enabled": false,
-    "gitlens.codeLens.authors.enabled": false,
-    "gitlens.statusBar.enabled": false,
 }
