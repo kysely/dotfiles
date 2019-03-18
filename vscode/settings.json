@@ -6,6 +6,7 @@
     "editor.fontSize": 13.5,
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.renderWhitespace": "none",
+    "editor.lineNumbers": "relative",
     "editor.renderIndentGuides": false,
     "editor.minimap.enabled": false,
     "editor.multiCursorModifier": "alt",
@@ -33,6 +34,7 @@
         "editorIndentGuide.background": "#353436"
     },
     "scm.diffDecorations": "none",
+    "vim.foldfix": true,
     "vim.useSystemClipboard": true,
     "vim.insertModeKeyBindings": [
         {
