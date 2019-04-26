@@ -1,6 +1,7 @@
 {
     // Code editor settings
-    "editor.lineHeight": 22,
+    "editor.lineHeight": 19,
+    "editor.fontSize": 10,
     "editor.fontWeight": "400",
     "editor.fontLigatures": true,
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
@@ -12,26 +13,6 @@
     "editor.rulers": [
         80
     ],
-    "editor.tokenColorCustomizations": {
-        "textMateRules": [
-            {
-                "scope": [
-                    "string.quoted.docstring.multi.python",
-                    "punctuation.definition.string.begin.python",
-                    "punctuation.definition.string.end.python",
-                    "keyword.codetag.notation.python",
-                    "comment.line"
-                ],
-                "settings": {
-                    "foreground": "#5B595C"
-                }
-            }
-        ]
-    },
-    "workbench.colorCustomizations": {
-        "editorRuler.foreground": "#353436",
-        "editorIndentGuide.background": "#353436"
-    },
     "scm.diffDecorations": "none",
     "vim.foldfix": true,
     "vim.useSystemClipboard": true,
@@ -45,20 +26,20 @@
         }
     ],
     // Terminal settings
-    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.fontSize": 10,
     "terminal.integrated.lineHeight": 1.7,
     "terminal.external.osxExec": "iTerm.app",
     "terminal.integrated.scrollback": 5000,
     // General
     "zenMode.hideStatusBar": false,
     "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
         "**/__pycache__": true,
-        "**/.cache": true,
         "**/.benchmarks": true,
+        "**/.cache": true,
+        "**/.DS_Store": false,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.svn": true
     },
     "files.associations": {
         "*.pyx": "python"
@@ -69,8 +50,8 @@
     "window.zoomLevel": 0,
     "extensions.ignoreRecommendations": false,
     "editor.renderControlCharacters": false,
-    "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
-    "workbench.iconTheme": "Monokai Pro (Filter Spectrum) Icons",
+    "workbench.colorTheme": "Chromodynamics",
+    "workbench.iconTheme": "file-icons",
     "workbench.startupEditor": "newUntitledFile",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.feedback.visible": false,
