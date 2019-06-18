@@ -14,9 +14,9 @@ Inspired by https://stackoverflow.com/a/14511461/7699136"
 (defun open-terminal ()
   "Procedure for opening terminal panel on the right"
   (split-window-horizontally)
-  ;(previous-multiframe-window)
+  (previous-multiframe-window)
   (shrink-window-horizontally 100000)
-  (enlarge-window-horizontally 70)
+  (enlarge-window-horizontally 90)
   (eshell))
 
 (defun confirm-kill-emacs (confirm)
