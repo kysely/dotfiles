@@ -1,7 +1,7 @@
 {
     // Code editor settings
-    "editor.lineHeight": 19,
-    "editor.fontSize": 10,
+    "editor.lineHeight": 20,
+    "editor.fontSize": 11,
     "editor.fontWeight": "400",
     "editor.fontLigatures": true,
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
@@ -50,11 +50,14 @@
     "window.zoomLevel": 0,
     "extensions.ignoreRecommendations": false,
     "editor.renderControlCharacters": false,
-    "workbench.colorTheme": "Chromodynamics",
+    "workbench.colorTheme": "Monokai Pro",
     "workbench.iconTheme": "file-icons",
     "workbench.startupEditor": "newUntitledFile",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.feedback.visible": false,
     "calva.autoConnect": false,
     "breadcrumbs.enabled": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }
