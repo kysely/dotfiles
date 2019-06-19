@@ -1,7 +1,7 @@
-(use-package kaolin-themes              ; Default theme
+(use-package doom-themes              ; Default theme
   :ensure t
   :config
-  (load-theme 'kaolin-ocean t))
+  (load-theme 'doom-molokai t))
 
 (use-package dimmer                     ; Dim inactive buffers
   :ensure t
