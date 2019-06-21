@@ -57,6 +57,10 @@
     (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
     (add-hook 'clojure-mode-hook          #'enable-paredit-mode)))
 
+(use-package yafolding
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook (lambda () (yafolding-mode))))
 
 (use-package highlight-numbers          ; Highlighting numbers
   :ensure t
