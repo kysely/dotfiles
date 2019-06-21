@@ -22,6 +22,29 @@
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
 
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1))
+
+(use-package tide                       ; TypeScript
+  :ensure t
+  :config
+  (add-hook 'typescript-mode-hook #'setup-tide-mode))
+
+(use-package lsp-mode                   ; JS & TS
+  :ensure t
+  :hook (typescript-mode . lsp)
+  :commands lsp)
+
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package company-lsp :commands company-lsp)
+(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
 (use-package dockerfile-mode            ; Dockerfile
   :ensure t
   :config
