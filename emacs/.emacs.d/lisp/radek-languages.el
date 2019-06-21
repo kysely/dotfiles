@@ -40,7 +40,11 @@
   :hook (typescript-mode . lsp)
   :commands lsp)
 
-(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
 (use-package company-lsp :commands company-lsp)
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
