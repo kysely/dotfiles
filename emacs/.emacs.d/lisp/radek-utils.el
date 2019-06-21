@@ -75,6 +75,12 @@
       (when (string= (file-name-extension buffer-file-name) "clj")
       (rainbow-delimiters-mode 1)))))
 
+(use-package prettier-js                ; Prettier for JS & TS
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'typescript-mode-hook 'prettier-js-mode))
+
 ;; VERSION CONTROL (GIT) -------------------------------------------------------
 (use-package magit
   :ensure t
