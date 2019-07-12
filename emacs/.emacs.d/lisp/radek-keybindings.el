@@ -47,6 +47,8 @@
     'normal neotree-mode-map (kbd "o") 'neotree-enter)
   (evil-define-key
     'normal neotree-mode-map (kbd "r") 'neotree-refresh)
+  (define-key
+    evil-motion-state-map (kbd "C-b") 'neotree-toggle)
 
   (global-set-key                       ; Magit
     (kbd "C-g") (lambda () (interactive) (magit-status)))
