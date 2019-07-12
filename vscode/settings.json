@@ -55,7 +55,7 @@
     "workbench.startupEditor": "newUntitledFile",
     "workbench.activityBar.visible": false,
     "workbench.statusBar.feedback.visible": false,
-    "calva.autoConnect": false,
+    "calva.autoConnect": true,
     "breadcrumbs.enabled": false,
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
