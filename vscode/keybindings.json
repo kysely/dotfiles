@@ -96,5 +96,15 @@
         "key": "cmd+g",
         "command": "editor.unfold",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+c cmd+k",
+        "command": "calva.loadFile",
+        "when": "calva:activated"
+    },
+    {
+        "key": "ctrl+alt+c enter",
+        "command": "-calva.loadFile",
+        "when": "calva:activated"
     }
 ]
