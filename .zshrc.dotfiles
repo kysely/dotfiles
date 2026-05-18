@@ -3,6 +3,29 @@
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
+alias ls='eza'
+alias tree='eza --tree'
+alias cd='z'
+alias g='git'
+alias ga='git add'
+alias gp='git push'
+alias gs='git status'
+alias t='tmux'
+alias ta='tmux a'
+
+gc() {
+  if [[ $# -eq 0 ]]; then
+    echo 'usage: gc <message>' >&2
+    return 1
+  fi
+
+  git commit -v -m "$*"
+}
+
+tt() {
+  tmux new-session -s "$1"
+}
+
 # Add common user-local bin directories first when they exist.
 [[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d "$HOME/bin" ]] && export PATH="$HOME/bin:$PATH"
