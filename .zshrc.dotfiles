@@ -16,6 +16,8 @@ alias lg='lazygit'
 alias t='tmux'
 alias ta='tmux a'
 alias tls='tmux ls'
+alias v='vim'
+alias n='nvim'
 
 gc() {
   if [[ $# -eq 0 ]]; then
@@ -43,6 +45,11 @@ tt() {
 export NVM_DIR="$HOME/.nvm"
 [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+# use nvim if available
+if [ -x "$(command -v nvim)" ]; then
+    alias vim='nvim'
+fi
 
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
