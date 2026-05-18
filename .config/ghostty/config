@@ -1,4 +1,5 @@
 font-size=14
+adjust-cell-height = 15%
 theme = Flexoki Light
 
 # Disable font zoom shortcuts (conflicts with Cmd+1 on Czech layout)
