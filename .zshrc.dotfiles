@@ -3,6 +3,18 @@
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
+# Ghostty sets TERM=xterm-ghostty, which fresh remote hosts often don't have
+# in their terminfo database. That breaks zsh/readline key handling over SSH
+# (backspace/delete/arrows) and makes tools like tput fail. Fall back to the
+# widely available xterm-256color when the current TERM is unknown.
+if [[ -n "${TERM:-}" ]] && ! infocmp "$TERM" >/dev/null 2>&1; then
+  export TERM="xterm-256color"
+fi
+
+# Make both common backspace encodings work in zsh.
+bindkey '^?' backward-delete-char
+bindkey '^H' backward-delete-char
+
 alias ls='eza'
 alias tree='eza --tree'
 alias cd='z'
