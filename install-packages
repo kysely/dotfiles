@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGE_FILE="$ROOT_DIR/packages.txt"
+
+has() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+require_package_file() {
+  if [[ ! -f "$PACKAGE_FILE" ]]; then
+    echo "Missing $PACKAGE_FILE" >&2
+    exit 1
+  fi
+}
+
+require_homebrew() {
+  if has brew; then
+    return
+  fi
+
+  echo "Homebrew is required but was not found." >&2
+  echo "Please install it manually from https://brew.sh/ and re-run this script." >&2
+  exit 1
+}
+
+install_with_brew() {
+  require_package_file
+  require_homebrew
+
+  local formulae=()
+  local casks=()
+  local line name token brew_pkg apt_pkg package_type
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*(#|$) ]] && continue
+
+    read -ra parts <<< "$line"
+    name="${parts[0]}"
+    brew_pkg="$name"
+    apt_pkg="$name"
+    package_type="formula"
+
+    for token in "${parts[@]:1}"; do
+      case "$token" in
+        brew=*) brew_pkg="${token#brew=}" ;;
+        apt=*) apt_pkg="${token#apt=}" ;;
+        type=*) package_type="${token#type=}" ;;
+        *) echo "Unknown package option '$token' in: $line" >&2; exit 1 ;;
+      esac
+    done
+
+    [[ "$brew_pkg" == "-" ]] && continue
+
+    case "$package_type" in
+      formula) formulae+=("$brew_pkg") ;;
+      cask) casks+=("$brew_pkg") ;;
+      *) echo "Unknown package type '$package_type' in: $line" >&2; exit 1 ;;
+    esac
+  done < "$PACKAGE_FILE"
+
+  if [[ ${#formulae[@]} -gt 0 ]]; then
+    brew install "${formulae[@]}"
+  fi
+
+  if [[ ${#casks[@]} -gt 0 ]]; then
+    brew install --cask "${casks[@]}"
+  fi
+}
+
+install_with_apt() {
+  require_package_file
+
+  local packages=()
+  local line name token brew_pkg apt_pkg package_type
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*(#|$) ]] && continue
+
+    read -ra parts <<< "$line"
+    name="${parts[0]}"
+    brew_pkg="$name"
+    apt_pkg="$name"
+    package_type="formula"
+
+    for token in "${parts[@]:1}"; do
+      case "$token" in
+        brew=*) brew_pkg="${token#brew=}" ;;
+        apt=*) apt_pkg="${token#apt=}" ;;
+        type=*) package_type="${token#type=}" ;;
+        *) echo "Unknown package option '$token' in: $line" >&2; exit 1 ;;
+      esac
+    done
+
+    [[ "$apt_pkg" == "-" ]] && continue
+    packages+=("$apt_pkg")
+  done < "$PACKAGE_FILE"
+
+  sudo apt-get update
+
+  if [[ ${#packages[@]} -gt 0 ]]; then
+    sudo apt-get install -y "${packages[@]}"
+  else
+    echo "No apt packages listed in $PACKAGE_FILE"
+  fi
+}
+
+main() {
+  case "$(uname -s)" in
+    Darwin)
+      install_with_brew
+      ;;
+    Linux)
+      if has apt-get; then
+        install_with_apt
+      elif has brew; then
+        echo "apt-get not found; using Homebrew on Linux."
+        install_with_brew
+      else
+        echo "Unsupported Linux system: expected apt-get or brew." >&2
+        exit 1
+      fi
+      ;;
+    *)
+      echo "Unsupported OS: $(uname -s)" >&2
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"

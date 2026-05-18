@@ -1,0 +1,24 @@
+# This is Git's per-user configuration file.
+[user]
+    name = Radek Kyselý
+    email = radek@kysely.org 
+[pull]
+    ff = only
+[init]
+    defaultBranch = main
+
+[alias]
+    c = commit -v
+    co = checkout
+    cob = checkout -b
+    coi = !git checkout $(git branch --sort=committerdate | fzf)
+    s = status
+    br = branch
+    d = diff
+    dd = diff --cached
+    l = log --oneline --graph
+    cp = cherry-pick
+    ps = push
+    pl = pull
+    pb = pull --rebase
+

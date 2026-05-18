@@ -1,0 +1,13 @@
+font-size=14
+theme = Flexoki Light
+
+# Disable font zoom shortcuts (conflicts with Cmd+1 on Czech layout)
+keybind = cmd++=unbind
+keybind = cmd+==unbind
+keybind = cmd+-=unbind
+keybind = cmd+0=unbind
+
+
+# Pass Cmd+J as C-j for tmux ergonomics
+keybind = cmd+j=text:\x0a
+

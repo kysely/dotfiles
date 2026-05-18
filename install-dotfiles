@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZSHRC="$HOME/.zshrc"
+ZSH_DOTFILES="$HOME/.zshrc.dotfiles"
+START_MARKER="# >>> dotfiles zsh config >>>"
+END_MARKER="# <<< dotfiles zsh config <<<"
+
+has() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+install_dotfiles() {
+  if ! has stow; then
+    echo "stow is required but was not found. Run ./install-packages first." >&2
+    exit 1
+  fi
+
+  stow --dir "$ROOT_DIR" --target "$HOME" .
+}
+
+install_zshrc_loader() {
+  touch "$ZSHRC"
+
+  if grep -Fqx "$START_MARKER" "$ZSHRC"; then
+    echo "$ZSHRC already sources $ZSH_DOTFILES"
+    return
+  fi
+
+  cat >> "$ZSHRC" <<EOF
+
+$START_MARKER
+if [ -f "\$HOME/.zshrc.dotfiles" ]; then
+  source "\$HOME/.zshrc.dotfiles"
+fi
+$END_MARKER
+EOF
+
+  echo "Added $ZSH_DOTFILES loader to $ZSHRC"
+}
+
+set_default_shell() {
+  if ! has zsh; then
+    echo "zsh is required but was not found. Run ./install-packages first." >&2
+    exit 1
+  fi
+
+  local zsh_path
+  zsh_path="$(command -v zsh)"
+
+  if [[ "${SHELL:-}" == "$zsh_path" ]]; then
+    echo "Default shell is already $zsh_path"
+    return
+  fi
+
+  if [[ -f /etc/shells ]] && ! grep -Fxq "$zsh_path" /etc/shells; then
+    echo "Adding $zsh_path to /etc/shells"
+    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  fi
+
+  echo "Changing default shell to $zsh_path"
+  chsh -s "$zsh_path"
+  echo "Default shell changed. You may need to log out and back in for it to take effect."
+}
+
+main() {
+  install_dotfiles
+  install_zshrc_loader
+  set_default_shell
+}
+
+main "$@"

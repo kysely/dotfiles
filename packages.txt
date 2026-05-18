@@ -1,0 +1,25 @@
+# Package manifest for install.sh
+#
+# Format:
+#   name [brew=<formula-or-cask-name|->] [apt=<package-name|->] [type=formula|cask]
+#
+# If brew= or apt= is omitted, the package name is used for that manager.
+# Use apt=- or brew=- to skip a package for that manager.
+# Use type=cask for Homebrew casks.
+
+bat
+curl
+eza
+fd apt=fd-find
+fzf
+gh
+git
+jq
+mosh
+neovim
+ripgrep
+stow
+tmux
+zoxide
+zsh
+ghostty type=cask apt=-
