@@ -10,6 +10,7 @@
 bat
 btop
 build-essential brew=-
+caddy brew=-
 curl
 eza
 fd apt=fd-find
