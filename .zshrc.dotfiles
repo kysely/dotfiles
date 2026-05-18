@@ -18,6 +18,7 @@ alias ta='tmux a'
 alias tls='tmux ls'
 alias v='vim'
 alias n='nvim'
+alias wop='whatsonport'
 
 gc() {
   if [[ $# -eq 0 ]]; then
@@ -53,3 +54,13 @@ fi
 
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+
+#------------------------------------------------------
+# Functions
+#------------------------------------------------------
+
+# Find out what's running on a given port
+whatsonport() {
+    lsof -i tcp:$1
+}
+
