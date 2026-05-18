@@ -40,6 +40,18 @@ EOF
   echo "Added $ZSH_DOTFILES loader to $ZSHRC"
 }
 
+install_lazyvim() {
+  mkdir -p "$HOME/.config"
+
+  if [[ -d "$HOME/.config/nvim" ]]; then
+    echo "$HOME/.config/nvim already exists; skipping LazyVim install"
+    return
+  fi
+
+  git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
+  rm -rf "$HOME/.config/nvim/.git"
+}
+
 set_default_shell() {
   if ! has zsh; then
     echo "zsh is required but was not found. Run ./install-packages first." >&2
@@ -65,6 +77,7 @@ set_default_shell() {
 }
 
 main() {
+  install_lazyvim
   install_dotfiles
   install_zshrc_loader
   set_default_shell
