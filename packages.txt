@@ -8,6 +8,7 @@
 # Use type=cask for Homebrew casks.
 
 bat
+btop
 build-essential brew=-
 curl
 eza
