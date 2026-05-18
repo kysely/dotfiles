@@ -106,17 +106,37 @@ install_with_apt() {
   fi
 }
 
+require_curl() {
+  if ! has curl; then
+    echo "curl is required but was not found." >&2
+    exit 1
+  fi
+}
+
 install_starship() {
   if has starship; then
     return
   fi
 
-  if ! has curl; then
-    echo "curl is required to install starship but was not found." >&2
-    exit 1
+  require_curl
+  curl -sS https://starship.rs/install.sh | sh -s -- -y
+}
+
+install_nvm() {
+  if [[ ! -d "$HOME/.nvm" ]]; then
+    require_curl
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
   fi
 
-  curl -sS https://starship.rs/install.sh | sh -s -- -y
+  export NVM_DIR="$HOME/.nvm"
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # shellcheck disable=SC1091
+    source "$NVM_DIR/nvm.sh"
+    nvm install stable
+  else
+    echo "nvm installed but $NVM_DIR/nvm.sh was not found." >&2
+    exit 1
+  fi
 }
 
 main() {
@@ -142,6 +162,7 @@ main() {
   esac
 
   install_starship
+  install_nvm
 }
 
 main "$@"
