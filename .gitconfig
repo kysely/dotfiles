@@ -15,7 +15,6 @@
     s = status
     br = branch
     d = diff
-    dd = diff --cached
     l = log --oneline --graph
     cp = cherry-pick
     ps = push
