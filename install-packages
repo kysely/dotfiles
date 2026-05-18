@@ -106,6 +106,19 @@ install_with_apt() {
   fi
 }
 
+install_starship() {
+  if has starship; then
+    return
+  fi
+
+  if ! has curl; then
+    echo "curl is required to install starship but was not found." >&2
+    exit 1
+  fi
+
+  curl -sS https://starship.rs/install.sh | sh -s -- -y
+}
+
 main() {
   case "$(uname -s)" in
     Darwin)
@@ -127,6 +140,8 @@ main() {
       exit 1
       ;;
   esac
+
+  install_starship
 }
 
 main "$@"
