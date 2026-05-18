@@ -8,6 +8,7 @@
 # Use type=cask for Homebrew casks.
 
 bat
+build-essential brew=-
 curl
 eza
 fd apt=fd-find
