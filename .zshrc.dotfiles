@@ -15,6 +15,7 @@ alias hd='hunk diff'
 alias lg='lazygit'
 alias t='tmux'
 alias ta='tmux a'
+alias tls='tmux ls'
 
 gc() {
   if [[ $# -eq 0 ]]; then
@@ -26,7 +27,12 @@ gc() {
 }
 
 tt() {
-  tmux new-session -s "$1"
+  if [[ $# -eq 0 ]]; then
+    echo 'usage: tt <session-name>' >&2
+    return 1
+  fi
+
+  tmux new-session -s "$1" -n "$1"
 }
 
 # Add common user-local bin directories first when they exist.
