@@ -10,6 +10,7 @@ alias g='git'
 alias ga='git add'
 alias gp='git push'
 alias gs='git status'
+alias hd='hunk diff'
 alias t='tmux'
 alias ta='tmux a'
 
