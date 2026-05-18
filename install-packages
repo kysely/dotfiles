@@ -150,21 +150,56 @@ install_nvm() {
   if [[ -s "$NVM_DIR/nvm.sh" ]]; then
     # shellcheck disable=SC1091
     source "$NVM_DIR/nvm.sh"
-    nvm install stable
+    nvm install --lts
+    nvm alias default 'lts/*'
+    nvm use default
   else
     echo "nvm installation failed: $NVM_DIR/nvm.sh was not found." >&2
     exit 1
   fi
 }
 
+fix_npm_cache_permissions() {
+  local npm_cache
+
+  npm_cache="$(npm config get cache)"
+
+  if [[ "$EUID" -ne 0 && -d "$npm_cache" && ( "$npm_cache" == "$HOME"/* || "$npm_cache" == "$HOME" ) ]]; then
+    sudo chown -R "$(id -u):$(id -g)" "$npm_cache"
+  fi
+}
+
+npm_global_install() {
+  local npm_bin npm_prefix
+
+  npm_bin="$(command -v npm)"
+  npm_prefix="$(npm config get prefix)"
+
+  if [[ "$EUID" -eq 0 || "$npm_prefix" == "$HOME"/* || "$npm_prefix" == "$HOME" || "$npm_prefix" == "$NVM_DIR"/* ]]; then
+    "$npm_bin" install -g "$@"
+  else
+    sudo "$npm_bin" install -g "$@"
+  fi
+}
+
 install_npm_globals() {
+  export NVM_DIR="$HOME/.nvm"
+
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # shellcheck disable=SC1091
+    source "$NVM_DIR/nvm.sh"
+    nvm use default >/dev/null
+  fi
+
   if ! has npm; then
     echo "npm is required to install global npm packages but was not found." >&2
     exit 1
   fi
 
-  sudo npm install -g @earendil-works/pi-coding-agent
-  sudo npm install -g hunkdiff
+  fix_npm_cache_permissions
+
+  npm_global_install @earendil-works/pi-coding-agent
+  npm_global_install hunkdiff
 }
 
 main() {
