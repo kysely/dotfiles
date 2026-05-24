@@ -1,5 +1,6 @@
 # Managed by dotfiles. Host/app-specific zsh setup can stay in ~/.zshrc.
 
+export XDG_CONFIG_HOME="$HOME/.config"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
