@@ -122,6 +122,50 @@ require_curl() {
   fi
 }
 
+install_difftastic() {
+  if has difft; then
+    return
+  fi
+
+  if [[ "$(uname -s)" != "Linux" ]]; then
+    return
+  fi
+
+  require_curl
+
+  local target url tmpdir archive difft_bin
+
+  case "$(uname -m)" in
+  x86_64 | amd64) target="x86_64-unknown-linux-gnu" ;;
+  aarch64 | arm64) target="aarch64-unknown-linux-gnu" ;;
+  *)
+    echo "Unsupported architecture for difftastic: $(uname -m)" >&2
+    echo "Install manually from https://github.com/Wilfred/difftastic/releases" >&2
+    exit 1
+    ;;
+  esac
+
+  url="https://github.com/Wilfred/difftastic/releases/latest/download/difft-$target.tar.gz"
+  tmpdir="$(mktemp -d)"
+  archive="$tmpdir/difftastic.tar.gz"
+
+  (
+    trap 'rm -rf "$tmpdir"' EXIT
+
+    curl -fsSL "$url" -o "$archive"
+    tar -xzf "$archive" -C "$tmpdir"
+
+    difft_bin="$(find "$tmpdir" -type f -name difft -print -quit)"
+    if [[ -z "$difft_bin" ]]; then
+      echo "Downloaded difftastic archive did not contain a difft binary." >&2
+      exit 1
+    fi
+
+    sudo install -d -m 0755 /usr/local/bin
+    sudo install -m 0755 "$difft_bin" /usr/local/bin/difft
+  )
+}
+
 install_starship() {
   if has starship; then
     return
@@ -224,6 +268,7 @@ main() {
     ;;
   esac
 
+  install_difftastic
   install_starship
   install_nvm
   install_npm_globals

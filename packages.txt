@@ -12,7 +12,7 @@ btop
 build-essential brew=-
 caddy brew=-
 curl
-difftastic
+difftastic apt=-
 eza
 fd apt=fd-find
 fzf
