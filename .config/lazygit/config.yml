@@ -1,2 +1,5 @@
 gui:
   sidePanelWidth: 0.2
+git:
+  pagers:
+    - externalDiffCommand: difft --color=always --display=side-by-side-show-both
