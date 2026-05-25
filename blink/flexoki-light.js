@@ -3,21 +3,21 @@
 
 t.prefs_.set('color-palette-overrides', [
   '#100F0F', // black
-  '#AF3029', // red
-  '#66800B', // green
-  '#AD8301', // yellow
-  '#205EA6', // blue
-  '#A02F6F', // magenta
-  '#24837B', // cyan
+  '#C03E35', // red
+  '#768D21', // green
+  '#BE9207', // yellow
+  '#3171B2', // blue
+  '#B74583', // magenta
+  '#2F968D', // cyan
   '#DAD8CE', // white
-  '#B7B5AC', // bright black
+  '#878580', // bright black
   '#D14D41', // bright red
   '#879A39', // bright green
   '#D0A215', // bright yellow
   '#4385BE', // bright blue
   '#CE5D97', // bright magenta
   '#3AA99F', // bright cyan
-  '#E6E4D9'  // bright white
+  '#F2F0E5'  // bright white
 ]);
 
 t.prefs_.set('foreground-color', '#100F0F');
