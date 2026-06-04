@@ -36,7 +36,59 @@ alias tls='tmux ls'
 alias v='vim'
 alias n='nvim'
 alias reload='source ~/.zshrc'
+alias upgrade='_dotfiles_upgrade'
 alias wop='whatsonport'
+
+_dotfiles_confirm_upgrade() {
+  local answer
+
+  printf 'Proceed with package upgrades and autoremove? [y/N] '
+  read -r answer
+
+  case "$answer" in
+  [Yy] | [Yy][Ee][Ss]) return 0 ;;
+  *)
+    echo 'Aborted.'
+    return 1
+    ;;
+  esac
+}
+
+_dotfiles_upgrade() {
+  case "$(uname -s)" in
+  Linux)
+    if command -v apt >/dev/null 2>&1; then
+      sudo apt update || return
+      apt list --upgradable || return
+      _dotfiles_confirm_upgrade || return
+      sudo apt upgrade && sudo apt autoremove
+    elif command -v brew >/dev/null 2>&1; then
+      brew update || return
+      brew outdated || return
+      _dotfiles_confirm_upgrade || return
+      brew upgrade && brew autoremove
+    else
+      echo 'upgrade: expected apt or brew on Linux' >&2
+      return 1
+    fi
+    ;;
+  Darwin)
+    if command -v brew >/dev/null 2>&1; then
+      brew update || return
+      brew outdated || return
+      _dotfiles_confirm_upgrade || return
+      brew upgrade && brew autoremove
+    else
+      echo 'upgrade: Homebrew is required on macOS' >&2
+      return 1
+    fi
+    ;;
+  *)
+    echo "upgrade: unsupported OS: $(uname -s)" >&2
+    return 1
+    ;;
+  esac
+}
 
 gc() {
   if [[ $# -eq 0 ]]; then
