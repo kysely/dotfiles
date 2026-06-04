@@ -180,11 +180,16 @@ install_linux_command_shims() {
     return
   fi
 
-  # Debian/Ubuntu package bat as /usr/bin/batcat to avoid a name conflict.
-  # Provide the upstream command name so tools and muscle memory can use `bat`.
+  # Debian/Ubuntu rename a couple of upstream commands to avoid package/name
+  # conflicts. Provide the upstream names so tools and muscle memory work.
+  sudo install -d -m 0755 /usr/local/bin
+
   if ! has bat && has batcat; then
-    sudo install -d -m 0755 /usr/local/bin
     sudo ln -sfn "$(command -v batcat)" /usr/local/bin/bat
+  fi
+
+  if ! has fd && has fdfind; then
+    sudo ln -sfn "$(command -v fdfind)" /usr/local/bin/fd
   fi
 }
 

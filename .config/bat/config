@@ -1,3 +1,4 @@
 --paging=never
 --style=plain
+--theme=ansi
 
