@@ -39,6 +39,11 @@ alias reload='source ~/.zshrc'
 alias upgrade='_dotfiles_upgrade'
 alias wop='whatsonport'
 
+# Debian/Ubuntu install the bat package as `batcat`.
+if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
+  alias bat='batcat'
+fi
+
 _dotfiles_confirm_upgrade() {
   local answer
 
