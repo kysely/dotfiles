@@ -166,6 +166,59 @@ install_difftastic() {
   )
 }
 
+install_lazygit() {
+  if has lazygit; then
+    return
+  fi
+
+  if [[ "$(uname -s)" != "Linux" ]]; then
+    return
+  fi
+
+  require_curl
+
+  local arch url tmpdir archive lazygit_bin
+
+  case "$(uname -m)" in
+  x86_64 | amd64) arch="x86_64" ;;
+  aarch64 | arm64) arch="arm64" ;;
+  *)
+    echo "Unsupported architecture for lazygit: $(uname -m)" >&2
+    echo "Install manually from https://github.com/jesseduffield/lazygit/releases" >&2
+    exit 1
+    ;;
+  esac
+
+  url="$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest \
+    | grep -E '"browser_download_url": ".*linux_'"$arch"'\.tar\.gz"' \
+    | head -n 1 \
+    | cut -d '"' -f 4)"
+
+  if [[ -z "$url" ]]; then
+    echo "Could not find a lazygit release asset for linux $arch." >&2
+    exit 1
+  fi
+
+  tmpdir="$(mktemp -d)"
+  archive="$tmpdir/lazygit.tar.gz"
+
+  (
+    trap 'rm -rf "$tmpdir"' EXIT
+
+    curl -fsSL "$url" -o "$archive"
+    tar -xzf "$archive" -C "$tmpdir"
+
+    lazygit_bin="$(find "$tmpdir" -type f -name lazygit -print -quit)"
+    if [[ -z "$lazygit_bin" ]]; then
+      echo "Downloaded lazygit archive did not contain a lazygit binary." >&2
+      exit 1
+    fi
+
+    sudo install -d -m 0755 /usr/local/bin
+    sudo install -m 0755 "$lazygit_bin" /usr/local/bin/lazygit
+  )
+}
+
 install_starship() {
   if has starship; then
     return
@@ -288,6 +341,7 @@ main() {
 
   install_linux_command_shims
   install_difftastic
+  install_lazygit
   install_starship
   install_nvm
   install_npm_globals

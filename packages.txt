@@ -19,7 +19,7 @@ fzf
 gh
 git
 jq
-lazygit
+lazygit apt=-
 mosh
 neovim
 ripgrep
