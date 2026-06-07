@@ -1,6 +1,6 @@
 font-size=14
 adjust-cell-height = 15%
-theme = Flexoki Light
+theme = TokyoNight Day
 
 # Disable font zoom shortcuts (conflicts with Cmd+1 on Czech layout)
 keybind = cmd++=unbind
