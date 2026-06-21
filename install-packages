@@ -29,9 +29,10 @@ install_with_brew() {
   require_package_file
   require_homebrew
 
+  local taps=()
   local formulae=()
   local casks=()
-  local line name token brew_pkg apt_pkg package_type
+  local line name token brew_pkg apt_pkg package_type tap
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     [[ "$line" =~ ^[[:space:]]*(#|$) ]] && continue
@@ -41,12 +42,14 @@ install_with_brew() {
     brew_pkg="$name"
     apt_pkg="$name"
     package_type="formula"
+    tap=""
 
     for token in "${parts[@]:1}"; do
       case "$token" in
       brew=*) brew_pkg="${token#brew=}" ;;
       apt=*) apt_pkg="${token#apt=}" ;;
       type=*) package_type="${token#type=}" ;;
+      tap=*) tap="${token#tap=}" ;;
       *)
         echo "Unknown package option '$token' in: $line" >&2
         exit 1
@@ -54,6 +57,7 @@ install_with_brew() {
       esac
     done
 
+    [[ -n "$tap" ]] && taps+=("$tap")
     [[ "$brew_pkg" == "-" ]] && continue
 
     case "$package_type" in
@@ -65,6 +69,10 @@ install_with_brew() {
       ;;
     esac
   done <"$PACKAGE_FILE"
+
+  for tap in "${taps[@]}"; do
+    brew tap "$tap"
+  done
 
   if [[ ${#formulae[@]} -gt 0 ]]; then
     brew install "${formulae[@]}"
@@ -95,6 +103,7 @@ install_with_apt() {
       brew=*) brew_pkg="${token#brew=}" ;;
       apt=*) apt_pkg="${token#apt=}" ;;
       type=*) package_type="${token#type=}" ;;
+      tap=*) ;;
       *)
         echo "Unknown package option '$token' in: $line" >&2
         exit 1
@@ -217,6 +226,15 @@ install_lazygit() {
     sudo install -d -m 0755 /usr/local/bin
     sudo install -m 0755 "$lazygit_bin" /usr/local/bin/lazygit
   )
+}
+
+install_lazycaddy() {
+  if has lazycaddy; then
+    return
+  fi
+
+  require_curl
+  curl -fsSL https://raw.githubusercontent.com/kysely/lazycaddy/main/install.sh | sh
 }
 
 install_starship() {
@@ -342,6 +360,7 @@ main() {
   install_linux_command_shims
   install_difftastic
   install_lazygit
+  install_lazycaddy
   install_starship
   install_nvm
   install_npm_globals

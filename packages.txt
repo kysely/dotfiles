@@ -1,11 +1,12 @@
 # Package manifest for install.sh
 #
 # Format:
-#   name [brew=<formula-or-cask-name|->] [apt=<package-name|->] [type=formula|cask]
+#   name [brew=<formula-or-cask-name|->] [apt=<package-name|->] [type=formula|cask] [tap=<homebrew-tap>]
 #
 # If brew= or apt= is omitted, the package name is used for that manager.
 # Use apt=- or brew=- to skip a package for that manager.
 # Use type=cask for Homebrew casks.
+# Use tap= to tap a Homebrew repository before installing.
 
 bat
 btop
@@ -20,6 +21,7 @@ gh
 git
 jq
 lazygit apt=-
+lazycaddy apt=- tap=kysely/tap
 mosh
 neovim
 ripgrep
