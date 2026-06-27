@@ -1,0 +1,37 @@
+{
+  "padding": {
+    "content": 1,
+    "prompt": 2
+  },
+  "prompt": {
+    "caret": "❯"
+  },
+  "assistant": {
+    "finalIcon": "⏺"
+  },
+  "tools": {
+    "compactSummaries": true,
+    "icons": {
+      "read": "◎",
+      "write": "◉",
+      "edit": "◉",
+      "bash": "◐"
+    },
+    "bash": {
+      "commandPreviewLines": 1,
+      "outputPreviewLines": 5
+    }
+  },
+  "reasoning": {
+    "offLabel": "thinking off",
+    "icons": {
+      "minimal": "◌",
+      "low": "○",
+      "medium": "◐",
+      "high": "●",
+      "xhigh": "◉",
+      "custom": "◉",
+      "default": "◉"
+    }
+  }
+}
