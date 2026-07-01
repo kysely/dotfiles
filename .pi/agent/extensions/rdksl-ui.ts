@@ -1424,23 +1424,20 @@ function patchFooterRender() {
 
     const usage = usageStatus(this.session, this.autoCompactEnabled, this);
     const cwd = dim(workingDirStatus(this.session, this.footerData));
-    const rightSeparator = usage ? dim(" • ") : "";
 
-    // Right side: working dir first, then the existing usage metadata.
-    // Keep usage visible by truncating the cwd portion first on narrow terminals.
-    const preferredLeftWidth = Math.min(visibleWidth(leftStyled), Math.max(16, Math.floor(width * 0.45)));
-    const rightBudget = Math.max(1, width - preferredLeftWidth - 2);
-    const cwdMax = Math.max(0, rightBudget - visibleWidth(usage) - visibleWidth(rightSeparator));
-    let right = cwdMax > 0 ? truncateToWidth(cwd, cwdMax, dim("...")) + rightSeparator + usage : usage;
-    if (visibleWidth(right) > width - 2) {
-      right = truncateToWidth(right, Math.max(1, width - 2), dim("..."));
-    }
-
-    const gap = right ? 2 : 0;
-    const leftMax = Math.max(1, width - visibleWidth(right) - gap);
+    // First line: model/status on the left, current workdir/session on the right.
+    const topRight = visibleWidth(cwd) > width - 2
+      ? truncateToWidth(cwd, Math.max(1, width - 2), dim("..."))
+      : cwd;
+    const gap = topRight ? 2 : 0;
+    const leftMax = Math.max(1, width - visibleWidth(topRight) - gap);
     const left = truncateToWidth(leftStyled, leftMax, dim("..."));
-    const spaces = " ".repeat(Math.max(0, width - visibleWidth(left) - visibleWidth(right)));
-    return [left + spaces + right];
+    const spaces = " ".repeat(Math.max(0, width - visibleWidth(left) - visibleWidth(topRight)));
+
+    // Second line: usage metadata right-aligned underneath.
+    const bottom = truncateToWidth(usage, width, dim("..."));
+    const bottomSpaces = " ".repeat(Math.max(0, width - visibleWidth(bottom)));
+    return [left + spaces + topRight, bottomSpaces + bottom];
   };
 
   proto[FOOTER_PATCH_FLAG] = { version: FOOTER_PATCH_VERSION, originalRender };
