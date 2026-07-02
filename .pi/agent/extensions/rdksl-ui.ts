@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { AssistantMessageComponent, FooterComponent, Theme, ToolExecutionComponent, UserMessageComponent } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, Editor, Markdown, TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, Editor, isKeyRelease, Markdown, matchesKey, TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 const PATCH_FLAG = Symbol.for("radek.pi.tui-mixed-horizontal-padding");
 const EDITOR_PATCH_FLAG = Symbol.for("radek.pi.prompt-caret-editor");
@@ -12,7 +12,7 @@ const FOOTER_PATCH_FLAG = Symbol.for("radek.pi.footer-one-line-status");
 const FOOTER_DATA_PATCH_FLAG = Symbol.for("radek.pi.footer-data-status-version");
 const MARKDOWN_PATCH_FLAG = Symbol.for("radek.pi.markdown-base-text-color");
 const LEGACY_BACKGROUND_PATCH_FLAG = Symbol.for("radek.pi.subtle-backgrounds");
-const PATCH_VERSION = 23;
+const PATCH_VERSION = 25;
 const EDITOR_PATCH_VERSION = 6;
 const USER_MESSAGE_PATCH_VERSION = 6;
 const ASSISTANT_MESSAGE_PATCH_VERSION = 10;
@@ -31,6 +31,9 @@ const trimCache = new WeakMap<string[], string[]>();
 const TERMINAL_SEGMENT_RESET = "\x1b[0m\x1b]8;;\x07";
 const THAI_LAO_AM_REGEX = /[\u0e33\u0eb3]/;
 const THAI_LAO_AM_GLOBAL_REGEX = /[\u0e33\u0eb3]/g;
+const MOUSE_REPORTING_ENABLE = "\x1b[?1000h\x1b[?1006h";
+const MOUSE_REPORTING_DISABLE = "\x1b[?1006l\x1b[?1000l";
+const MOUSE_WHEEL_SCROLL_LINES = 3;
 
 type Padding = { left: number; right: number; contentWidth: number };
 
@@ -53,6 +56,10 @@ type MaybeTui = {
   terminal?: { columns?: number; rows?: number; write?: (text: string) => void };
   children?: ComponentLike[];
   render(width: number): string[];
+  handleInput?: (data: string, ...args: unknown[]) => unknown;
+  start?: (...args: unknown[]) => unknown;
+  stop?: (...args: unknown[]) => unknown;
+  requestRender?: () => void;
   compositeOverlays?: (...args: unknown[]) => string[];
   getHorizontalPadding?: (width: number) => Padding;
   applyHorizontalPadding?: (lines: string[], padding: Padding) => string[];
@@ -62,16 +69,27 @@ type MaybeTui = {
   previousViewportTop?: number;
   positionHardwareCursor?: (cursorPos: { row: number; col: number } | null, lineCount: number) => void;
   overlayStack?: unknown[];
+  isOverlayVisible?: (entry: unknown) => boolean;
+  focusedComponent?: unknown;
   cursorRow?: number;
   hardwareCursorRow?: number;
   maxLinesRendered?: number;
   __radekCurrentFrameMeta?: ChatFrameMeta;
   __radekPreviousFrameMeta?: ChatFrameMeta;
+  __radekStickyPromptActive?: boolean;
+  __radekStickyScrollOffset?: number;
+  __radekStickyScrollMaxOffset?: number;
+  __radekStickyScrollTotalLines?: number;
+  __radekStickyScrollViewportHeight?: number;
+  __radekMouseReportingEnabled?: boolean;
 };
 
 type PatchState = {
   version: number;
   originalDoRender?: unknown;
+  originalHandleInput?: unknown;
+  originalStart?: unknown;
+  originalStop?: unknown;
 };
 
 type RenderPatchState = {
@@ -1792,6 +1810,165 @@ function tryFastSuffixRender(tui: MaybeTui, rawLines: string[], width: number, h
   return true;
 }
 
+function clampNumber(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function renderStickyPromptFrame(tui: MaybeTui, scrollableLines: string[], stickyLines: string[], height: number): string[] {
+  if (height <= 0) return [...scrollableLines, ...stickyLines];
+
+  tui.__radekStickyPromptActive = true;
+
+  const stickyVisible = stickyLines.length > height ? stickyLines.slice(stickyLines.length - height) : stickyLines;
+  const viewportHeight = Math.max(0, height - stickyVisible.length);
+  const previousTotal = tui.__radekStickyScrollTotalLines;
+  let offset = Math.max(0, tui.__radekStickyScrollOffset ?? 0);
+
+  // If the user is scrolled up and new transcript lines arrive, preserve the
+  // same visible content instead of pulling the viewport toward the bottom.
+  if (offset > 0 && previousTotal !== undefined && scrollableLines.length > previousTotal) {
+    offset += scrollableLines.length - previousTotal;
+  }
+
+  const maxOffset = Math.max(0, scrollableLines.length - viewportHeight);
+  offset = clampNumber(offset, 0, maxOffset);
+
+  tui.__radekStickyScrollOffset = offset;
+  tui.__radekStickyScrollMaxOffset = maxOffset;
+  tui.__radekStickyScrollTotalLines = scrollableLines.length;
+  tui.__radekStickyScrollViewportHeight = viewportHeight;
+
+  const end = Math.max(0, scrollableLines.length - offset);
+  const start = Math.max(0, end - viewportHeight);
+  const visibleScrollable = viewportHeight > 0 ? scrollableLines.slice(start, end) : [];
+  const topBlankLines = Math.max(0, viewportHeight - visibleScrollable.length);
+
+  return [
+    ...Array.from({ length: topBlankLines }, () => ""),
+    ...visibleScrollable,
+    ...stickyVisible,
+  ];
+}
+
+function hasVisibleOverlay(tui: MaybeTui): boolean {
+  if (!Array.isArray(tui.overlayStack) || tui.overlayStack.length === 0) return false;
+  if (typeof tui.isOverlayVisible !== "function") return true;
+  return tui.overlayStack.some((entry) => tui.isOverlayVisible?.(entry));
+}
+
+function setMouseReporting(tui: MaybeTui, enabled: boolean) {
+  const write = tui.terminal?.write;
+  if (typeof write !== "function") return;
+  if (tui.__radekMouseReportingEnabled === enabled) return;
+
+  write.call(tui.terminal, enabled ? MOUSE_REPORTING_ENABLE : MOUSE_REPORTING_DISABLE);
+  tui.__radekMouseReportingEnabled = enabled;
+}
+
+function parseMouseInput(data: string): { kind: "wheel"; direction: "up" | "down" | "left" | "right" } | { kind: "other" } | undefined {
+  const sgrMatch = data.match(/^\x1b\[<(\d+);(\d+);(\d+)([mM])$/);
+  if (sgrMatch) {
+    const buttonCode = Number(sgrMatch[1]);
+    if (!Number.isFinite(buttonCode)) return { kind: "other" };
+    const baseButton = buttonCode & ~28; // Strip Shift/Alt/Ctrl modifier bits.
+    if (sgrMatch[4] === "M") {
+      if (baseButton === 64) return { kind: "wheel", direction: "up" };
+      if (baseButton === 65) return { kind: "wheel", direction: "down" };
+      if (baseButton === 66) return { kind: "wheel", direction: "left" };
+      if (baseButton === 67) return { kind: "wheel", direction: "right" };
+    }
+    return { kind: "other" };
+  }
+
+  if (data.startsWith("\x1b[M") && data.length >= 6) {
+    const buttonCode = data.charCodeAt(3) - 32;
+    const baseButton = buttonCode & ~28;
+    if (baseButton === 64) return { kind: "wheel", direction: "up" };
+    if (baseButton === 65) return { kind: "wheel", direction: "down" };
+    if (baseButton === 66) return { kind: "wheel", direction: "left" };
+    if (baseButton === 67) return { kind: "wheel", direction: "right" };
+    return { kind: "other" };
+  }
+
+  return undefined;
+}
+
+function focusedEditorHasScrollablePrompt(tui: MaybeTui): boolean {
+  const editor = tui.focusedComponent;
+  if (!(editor instanceof Editor)) return false;
+  const layoutText = (editor as any).layoutText;
+  if (typeof layoutText !== "function") return false;
+
+  const layoutWidth = Number((editor as any).lastWidth) || Math.max(1, Number(tui.terminal?.columns) || 80);
+  const layoutLines = layoutText.call(editor, layoutWidth);
+  if (!Array.isArray(layoutLines)) return false;
+
+  const terminalRows = Number(tui.terminal?.rows) || 24;
+  const maxVisibleLines = Math.max(5, Math.floor(terminalRows * 0.3));
+  return layoutLines.length > maxVisibleLines;
+}
+
+function scrollStepForInput(tui: MaybeTui, data: string): number | "top" | "bottom" | undefined {
+  if (isKeyRelease(data)) return undefined;
+
+  const maxOffset = tui.__radekStickyScrollMaxOffset ?? 0;
+  const offset = tui.__radekStickyScrollOffset ?? 0;
+  const viewportHeight = tui.__radekStickyScrollViewportHeight ?? (Number(tui.terminal?.rows) || 24);
+  const pageSize = Math.max(1, viewportHeight - 2);
+  const promptCanPage = focusedEditorHasScrollablePrompt(tui);
+  const pageUp = matchesKey(data, "pageUp");
+  const pageDown = matchesKey(data, "pageDown");
+  const shiftPageUp = matchesKey(data, "shift+pageUp");
+  const shiftPageDown = matchesKey(data, "shift+pageDown");
+
+  if ((shiftPageUp || (pageUp && !promptCanPage))) return maxOffset > 0 ? pageSize : undefined;
+  if ((shiftPageDown || (pageDown && !promptCanPage))) return offset > 0 ? -pageSize : undefined;
+  if (matchesKey(data, "alt+up")) return maxOffset > 0 ? 1 : undefined;
+  if (matchesKey(data, "alt+down")) return offset > 0 ? -1 : undefined;
+  if (matchesKey(data, "ctrl+home")) return maxOffset > 0 ? "top" : undefined;
+  if (matchesKey(data, "ctrl+end")) return offset > 0 ? "bottom" : undefined;
+
+  return undefined;
+}
+
+function applyStickyScrollStep(tui: MaybeTui, step: number | "top" | "bottom"): boolean {
+  const maxOffset = tui.__radekStickyScrollMaxOffset ?? 0;
+  const currentOffset = tui.__radekStickyScrollOffset ?? 0;
+  const nextOffset = step === "top"
+    ? maxOffset
+    : step === "bottom"
+      ? 0
+      : clampNumber(currentOffset + step, 0, maxOffset);
+
+  if (nextOffset === currentOffset) return false;
+
+  tui.__radekStickyScrollOffset = nextOffset;
+  tui.requestRender?.();
+  return true;
+}
+
+function handleStickyScrollInput(tui: MaybeTui, data: string): boolean {
+  const mouse = parseMouseInput(data);
+  if (mouse) {
+    // Mouse reporting turns clicks/wheel gestures into escape sequences. Pi TUI
+    // has no native mouse handling, so consume all of them to avoid leaking
+    // bytes into the prompt; only wheel vertical gestures scroll the transcript.
+    if (mouse.kind !== "wheel" || mouse.direction === "left" || mouse.direction === "right") return true;
+    if (!tui.__radekStickyPromptActive || hasVisibleOverlay(tui)) return true;
+    if (tui.focusedComponent && !(tui.focusedComponent instanceof Editor)) return true;
+    applyStickyScrollStep(tui, mouse.direction === "up" ? MOUSE_WHEEL_SCROLL_LINES : -MOUSE_WHEEL_SCROLL_LINES);
+    return true;
+  }
+
+  if (!tui.__radekStickyPromptActive || hasVisibleOverlay(tui)) return false;
+  if (tui.focusedComponent && !(tui.focusedComponent instanceof Editor)) return false;
+
+  const step = scrollStepForInput(tui, data);
+  if (step === undefined) return false;
+
+  return applyStickyScrollStep(tui, step);
+}
+
 export default function (pi?: any) {
   restoreLegacyThemeMonkeyPatches();
 
@@ -1812,15 +1989,46 @@ export default function (pi?: any) {
   // If a newer/older version of this extension is already active in this Pi
   // process, restore the native renderer before applying the padding patch.
   // That keeps /reload and source edits from building wrapper chains.
-  restorePrototypeMethods(proto, PATCH_FLAG, [["doRender", "originalDoRender"]]);
+  restorePrototypeMethods(proto, PATCH_FLAG, [
+    ["doRender", "originalDoRender"],
+    ["handleInput", "originalHandleInput"],
+    ["start", "originalStart"],
+    ["stop", "originalStop"],
+  ]);
 
   const originalDoRender = proto.doRender;
+  const originalHandleInput = proto.handleInput;
+  const originalStart = proto.start;
+  const originalStop = proto.stop;
   if (typeof originalDoRender !== "function") return;
+
+  if (typeof originalHandleInput === "function") {
+    proto.handleInput = function patchedHandleInput(this: MaybeTui, data: string, ...inputArgs: unknown[]) {
+      if (typeof data === "string" && handleStickyScrollInput(this, data)) return;
+      return (originalHandleInput as Function).apply(this, [data, ...inputArgs]);
+    };
+  }
+
+  if (typeof originalStart === "function") {
+    proto.start = function patchedStart(this: MaybeTui, ...startArgs: unknown[]) {
+      const result = (originalStart as Function).apply(this, startArgs);
+      setMouseReporting(this, true);
+      return result;
+    };
+  }
+
+  if (typeof originalStop === "function") {
+    proto.stop = function patchedStop(this: MaybeTui, ...stopArgs: unknown[]) {
+      setMouseReporting(this, false);
+      return (originalStop as Function).apply(this, stopArgs);
+    };
+  }
 
   proto.doRender = function patchedDoRender(this: MaybeTui, ...args: unknown[]) {
     // Use the terminal's real hardware cursor for prompt blinking. The editor
     // still emits CURSOR_MARKER, so TUI knows where to place it.
     (this as any).showHardwareCursor = true;
+    setMouseReporting(this, true);
     const terminalWidth = Number(this.terminal?.columns) || 80;
     const contentPadding = getContentPadding();
     const promptPadding = getPromptPadding();
@@ -1841,47 +2049,39 @@ export default function (pi?: any) {
 
     this.render = function renderWithMixedPadding(this: MaybeTui, _width: number) {
       this.__radekCurrentFrameMeta = undefined;
+      this.__radekStickyPromptActive = false;
       if (!Array.isArray(this.children) || this.children.length === 0) {
         return addLeftPadding(originalRender.call(this, getPadding(terminalWidth, contentPadding).contentWidth), getPadding(terminalWidth, contentPadding));
       }
 
-      const lines: string[] = [];
+      const scrollableLines: string[] = [];
+      const stickyLines: string[] = [];
       const childCount = this.children.length;
-      let chatMeta: Omit<ChatFrameMeta, "width" | "totalLines"> | undefined;
       this.children.forEach((child, index) => {
         if (isChatContainerChild(index)) {
-          const chatStart = lines.length;
           const chat = renderChatContainer(child, terminalWidth, contentPadding);
-          lines.push(...chat.lines);
-          if (chat.signature) {
-            chatMeta = {
-              chatStart,
-              chatLineCount: chat.lines.length,
-              chatSignature: chat.signature,
-              chatBlocks: chat.blocks,
-            };
-          }
+          scrollableLines.push(...chat.lines);
           return;
         }
 
         if (isEditorContainerChild(index, childCount)) {
           // Editor horizontal rules span the full terminal width. The editor
           // render patch adds the caret and textarea text offset internally.
-          lines.push(...renderPromptEditorChild(child, terminalWidth));
+          stickyLines.push(...renderPromptEditorChild(child, terminalWidth));
           return;
         }
 
         const requestedPadding = isPromptAreaChild(index, childCount) ? promptPadding : contentPadding;
-        lines.push(...renderChildWithPadding(child, terminalWidth, requestedPadding));
+        const renderedLines = renderChildWithPadding(child, terminalWidth, requestedPadding);
+        if (isPromptAreaChild(index, childCount)) {
+          stickyLines.push(...renderedLines);
+        } else {
+          scrollableLines.push(...renderedLines);
+        }
       });
-      if (chatMeta) {
-        this.__radekCurrentFrameMeta = {
-          width: terminalWidth,
-          totalLines: lines.length,
-          ...chatMeta,
-        };
-      }
-      return lines;
+
+      const terminalHeight = Number(this.terminal?.rows) || 24;
+      return renderStickyPromptFrame(this, scrollableLines, stickyLines, terminalHeight);
     };
 
     // Base content is already padded by renderWithMixedPadding. Let overlays keep
@@ -1920,5 +2120,5 @@ export default function (pi?: any) {
     }
   };
 
-  proto[PATCH_FLAG] = { version: PATCH_VERSION, originalDoRender };
+  proto[PATCH_FLAG] = { version: PATCH_VERSION, originalDoRender, originalHandleInput, originalStart, originalStop };
 }
