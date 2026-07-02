@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { AssistantMessageComponent, FooterComponent, Theme, ToolExecutionComponent, UserMessageComponent } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, Editor, isKeyRelease, Markdown, matchesKey, TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, Editor, getKeybindings, isKeyRelease, Markdown, matchesKey, TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 const PATCH_FLAG = Symbol.for("radek.pi.tui-mixed-horizontal-padding");
 const EDITOR_PATCH_FLAG = Symbol.for("radek.pi.prompt-caret-editor");
@@ -12,7 +12,7 @@ const FOOTER_PATCH_FLAG = Symbol.for("radek.pi.footer-one-line-status");
 const FOOTER_DATA_PATCH_FLAG = Symbol.for("radek.pi.footer-data-status-version");
 const MARKDOWN_PATCH_FLAG = Symbol.for("radek.pi.markdown-base-text-color");
 const LEGACY_BACKGROUND_PATCH_FLAG = Symbol.for("radek.pi.subtle-backgrounds");
-const PATCH_VERSION = 25;
+const PATCH_VERSION = 26;
 const EDITOR_PATCH_VERSION = 6;
 const USER_MESSAGE_PATCH_VERSION = 6;
 const ASSISTANT_MESSAGE_PATCH_VERSION = 10;
@@ -81,6 +81,7 @@ type MaybeTui = {
   __radekStickyScrollMaxOffset?: number;
   __radekStickyScrollTotalLines?: number;
   __radekStickyScrollViewportHeight?: number;
+  __radekStickyJumpOnTranscriptGrowth?: boolean;
   __radekMouseReportingEnabled?: boolean;
 };
 
@@ -1824,9 +1825,13 @@ function renderStickyPromptFrame(tui: MaybeTui, scrollableLines: string[], stick
   const previousTotal = tui.__radekStickyScrollTotalLines;
   let offset = Math.max(0, tui.__radekStickyScrollOffset ?? 0);
 
-  // If the user is scrolled up and new transcript lines arrive, preserve the
-  // same visible content instead of pulling the viewport toward the bottom.
-  if (offset > 0 && previousTotal !== undefined && scrollableLines.length > previousTotal) {
+  const transcriptGrew = previousTotal !== undefined && scrollableLines.length > previousTotal;
+  if (tui.__radekStickyJumpOnTranscriptGrowth && transcriptGrew) {
+    offset = 0;
+    tui.__radekStickyJumpOnTranscriptGrowth = false;
+  } else if (offset > 0 && transcriptGrew) {
+    // If the user is scrolled up and new transcript lines arrive, preserve the
+    // same visible content instead of pulling the viewport toward the bottom.
     offset += scrollableLines.length - previousTotal;
   }
 
@@ -1891,6 +1896,37 @@ function parseMouseInput(data: string): { kind: "wheel"; direction: "up" | "down
   }
 
   return undefined;
+}
+
+function editorText(editor: Editor): string {
+  const anyEditor = editor as any;
+  const getExpandedText = anyEditor.getExpandedText;
+  if (typeof getExpandedText === "function") return String(getExpandedText.call(editor) ?? "");
+  const getText = anyEditor.getText;
+  if (typeof getText === "function") return String(getText.call(editor) ?? "");
+  return "";
+}
+
+function submitShouldJumpToBottom(tui: MaybeTui, data: string): { editor: Editor; beforeText: string } | undefined {
+  if (isKeyRelease(data)) return undefined;
+  const editor = tui.focusedComponent;
+  if (!(editor instanceof Editor)) return undefined;
+  if ((editor as any).disableSubmit) return undefined;
+
+  const keybindings = getKeybindings();
+  if (!keybindings.matches(data, "tui.input.submit")) return undefined;
+
+  const beforeText = editorText(editor);
+  return beforeText.trim().length > 0 ? { editor, beforeText } : undefined;
+}
+
+function markJumpToSubmittedMessage(tui: MaybeTui, submit: { editor: Editor; beforeText: string } | undefined) {
+  if (!submit) return;
+  const afterText = editorText(submit.editor);
+  if (afterText.trim().length > 0 || afterText === submit.beforeText) return;
+
+  tui.__radekStickyScrollOffset = 0;
+  tui.__radekStickyJumpOnTranscriptGrowth = true;
 }
 
 function focusedEditorHasScrollablePrompt(tui: MaybeTui): boolean {
@@ -2005,7 +2041,10 @@ export default function (pi?: any) {
   if (typeof originalHandleInput === "function") {
     proto.handleInput = function patchedHandleInput(this: MaybeTui, data: string, ...inputArgs: unknown[]) {
       if (typeof data === "string" && handleStickyScrollInput(this, data)) return;
-      return (originalHandleInput as Function).apply(this, [data, ...inputArgs]);
+      const submit = typeof data === "string" ? submitShouldJumpToBottom(this, data) : undefined;
+      const result = (originalHandleInput as Function).apply(this, [data, ...inputArgs]);
+      markJumpToSubmittedMessage(this, submit);
+      return result;
     };
   }
 
