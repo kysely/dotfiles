@@ -134,6 +134,12 @@ fi
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
+# Make Ctrl-P/Ctrl-N navigate shell history, matching Up/Down.
+bindkey '^P' up-line-or-history
+bindkey '^N' down-line-or-history
+bindkey -M viins '^P' up-line-or-history
+bindkey -M viins '^N' down-line-or-history
+
 #------------------------------------------------------
 # Functions
 #------------------------------------------------------
