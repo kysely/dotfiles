@@ -237,6 +237,15 @@ install_lazycaddy() {
   curl -fsSL https://raw.githubusercontent.com/kysely/lazycaddy/main/install.sh | sh
 }
 
+install_herdr() {
+  if has herdr; then
+    return
+  fi
+
+  require_curl
+  curl -fsSL https://herdr.dev/install.sh | sh
+}
+
 install_starship() {
   if has starship; then
     return
@@ -361,6 +370,7 @@ main() {
   install_difftastic
   install_lazygit
   install_lazycaddy
+  install_herdr
   install_starship
   install_nvm
   install_npm_globals
