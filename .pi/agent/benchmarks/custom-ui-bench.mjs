@@ -74,9 +74,13 @@ for (let i = 0; i < pairs; i++) {
   }
 }
 
+// Mirror Pi's current root child order:
+// header, loaded resources, chat, pending messages, status,
+// widgets-above, editor, widgets-below, footer.
+tui.addChild({ render: () => [], invalidate() {} });
 tui.addChild({ render: () => [], invalidate() {} });
 tui.addChild(chat);
-for (let i = 0; i < 5; i++) tui.addChild({ render: () => [], invalidate() {} });
+for (let i = 0; i < 6; i++) tui.addChild({ render: () => [], invalidate() {} });
 
 const firstStart = performance.now();
 tui.doRender();

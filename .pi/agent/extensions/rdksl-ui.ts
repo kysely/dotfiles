@@ -12,17 +12,19 @@ const FOOTER_PATCH_FLAG = Symbol.for("radek.pi.footer-one-line-status");
 const FOOTER_DATA_PATCH_FLAG = Symbol.for("radek.pi.footer-data-status-version");
 const MARKDOWN_PATCH_FLAG = Symbol.for("radek.pi.markdown-base-text-color");
 const LEGACY_BACKGROUND_PATCH_FLAG = Symbol.for("radek.pi.subtle-backgrounds");
-const PATCH_VERSION = 26;
+const PATCH_VERSION = 29;
 const EDITOR_PATCH_VERSION = 6;
-const USER_MESSAGE_PATCH_VERSION = 6;
-const ASSISTANT_MESSAGE_PATCH_VERSION = 10;
-const TOOL_CALL_PATCH_VERSION = 17;
-const FOOTER_PATCH_VERSION = 15;
-const MARKDOWN_PATCH_VERSION = 2;
+const USER_MESSAGE_PATCH_VERSION = 8;
+const ASSISTANT_MESSAGE_PATCH_VERSION = 11;
+const TOOL_CALL_PATCH_VERSION = 18;
+const FOOTER_PATCH_VERSION = 16;
+const MARKDOWN_PATCH_VERSION = 3;
 const CONFIG_CHECK_INTERVAL_MS = 1000;
 const THEME_CACHE_VERSION = 1;
-const CHAT_ENTRY_BLOCK_CACHE_VERSION = 1;
-const CHAT_CONTAINER_CACHE_VERSION = 1;
+const CHAT_ENTRY_BLOCK_CACHE_VERSION = 4;
+const CHAT_CONTAINER_CACHE_VERSION = 4;
+
+const PI_THEME_SYMBOL = Symbol.for("@earendil-works/pi-coding-agent:theme");
 
 let currentTheme: any;
 let nextChatEntryId = 1;
@@ -462,10 +464,14 @@ function renderPromptEditorChild(child: ComponentLike, terminalWidth: number): s
   }
 }
 
-function isChatContainerChild(index: number): boolean {
-  // Pi's root TUI children are appended in this order:
-  // header, messages, pending/status, widgets-above, editor, widgets-below, footer.
-  return index === 1;
+function isChatContainerChild(index: number, childCount: number): boolean {
+  // Pi's root TUI children are currently appended as:
+  // header, loaded-resources, chat, pending-messages, status,
+  // widgets-above, editor, widgets-below, footer.
+  // Older/synthetic layouts omit loaded-resources/status variants, so derive the
+  // chat slot from the stable seven-child tail when possible and fall back to 1.
+  const expectedIndex = childCount >= 8 ? childCount - 7 : 1;
+  return index === expectedIndex;
 }
 
 function isEditorContainerChild(index: number, childCount: number): boolean {
@@ -499,9 +505,13 @@ function restoreLegacyThemeMonkeyPatches(theme?: any) {
   restoreLegacyThemePatch(theme);
 }
 
+function activeTheme(): any {
+  return (globalThis as any)[PI_THEME_SYMBOL] ?? currentTheme;
+}
+
 function themeCacheKey(): string {
   getCustomUiConfig();
-  const theme = currentTheme;
+  const theme = activeTheme();
   const mode = typeof theme?.getColorMode === "function" ? theme.getColorMode() : "unknown";
   return `${THEME_CACHE_VERSION}:${cachedConfigKey}:${theme?.name ?? "unknown"}:${mode}`;
 }
@@ -534,7 +544,7 @@ function patchMarkdownBaseTextColor() {
 
     const originalDefaultTextStyle = this.defaultTextStyle;
     const originalDefaultStylePrefix = this.defaultStylePrefix;
-    this.defaultTextStyle = { color: (text: string) => currentTheme?.fg ? currentTheme.fg("text", text) : text };
+    this.defaultTextStyle = { color: (text: string) => activeTheme()?.fg ? activeTheme().fg("text", text) : text };
     this.defaultStylePrefix = undefined;
     try {
       return originalRender.call(this, width);
@@ -548,7 +558,8 @@ function patchMarkdownBaseTextColor() {
 }
 
 function fg(color: string, text: string): string {
-  return currentTheme?.fg ? currentTheme.fg(color, text) : text;
+  const theme = activeTheme();
+  return theme?.fg ? theme.fg(color, text) : text;
 }
 
 function dim(text: string): string {
@@ -660,7 +671,8 @@ function patchUserMessageRender() {
     }
 
     const caretWidth = visibleWidth(promptCaretText());
-    if (width <= caretWidth + 1 || !this.contentBox?.children?.length || typeof this.contentBox.applyBg !== "function") {
+    const contentBox = this.contentBox ?? this.children?.[0];
+    if (width <= caretWidth + 1 || !contentBox?.children?.length || typeof contentBox.applyBg !== "function") {
       const originalFlag = this.__radekFullWidthUserMessage;
       this.__radekFullWidthUserMessage = false;
       try {
@@ -671,11 +683,11 @@ function patchUserMessageRender() {
     }
 
     const contentWidth = Math.max(1, width - caretWidth);
-    const markdown = this.contentBox.children[0];
+    const markdown = contentBox.children[0];
     const contentLines = markdown.render(contentWidth) as string[];
     const caret = mutedCaret();
     const gutter = " ".repeat(caretWidth);
-    const lines = contentLines.map((line, index) => this.contentBox.applyBg((index === 0 ? caret : gutter) + line, width));
+    const lines = contentLines.map((line, index) => contentBox.applyBg((index === 0 ? caret : gutter) + line, width));
 
     if (lines.length > 0) {
       lines[0] = "\x1b]133;A\x07" + lines[0];
@@ -1182,23 +1194,24 @@ function formatCwdForFooter(cwd: string, home: string | undefined): string {
 }
 
 function colorReasoningEffort(level: string, label: string): string {
-  if (!currentTheme?.fg) return label;
+  const theme = activeTheme();
+  if (!theme?.fg) return label;
   switch (level) {
     case "off":
     case "none":
-      return currentTheme.fg("thinkingOff", label);
+      return theme.fg("thinkingOff", label);
     case "minimal":
-      return currentTheme.fg("thinkingMinimal", label);
+      return theme.fg("thinkingMinimal", label);
     case "low":
-      return currentTheme.fg("thinkingLow", label);
+      return theme.fg("thinkingLow", label);
     case "medium":
-      return currentTheme.fg("thinkingMedium", label);
+      return theme.fg("thinkingMedium", label);
     case "high":
-      return currentTheme.fg("thinkingHigh", label);
+      return theme.fg("thinkingHigh", label);
     case "xhigh":
-      return currentTheme.fg("thinkingXhigh", label);
+      return theme.fg("thinkingXhigh", label);
     default:
-      return currentTheme.fg("thinkingXhigh", label);
+      return theme.fg("thinkingXhigh", label);
   }
 }
 
@@ -2097,7 +2110,7 @@ export default function (pi?: any) {
       const stickyLines: string[] = [];
       const childCount = this.children.length;
       this.children.forEach((child, index) => {
-        if (isChatContainerChild(index)) {
+        if (isChatContainerChild(index, childCount)) {
           const chat = renderChatContainer(child, terminalWidth, contentPadding);
           scrollableLines.push(...chat.lines);
           return;
