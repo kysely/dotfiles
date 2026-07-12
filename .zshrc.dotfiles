@@ -114,7 +114,7 @@ tt() {
     return 1
   fi
 
-  tmux new-session -s "$1" -n "$1"
+  tmux new-session -s "$1"
 }
 
 # Add common user-local bin directories first when they exist.
