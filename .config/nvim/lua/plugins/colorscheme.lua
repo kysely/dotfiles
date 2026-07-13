@@ -5,7 +5,7 @@ end
 
 local function set_light_theme()
 	vim.api.nvim_set_option_value("background", "light", {})
-	vim.cmd.colorscheme("dawnfox")
+	vim.cmd.colorscheme("github_light")
 end
 
 local function macos_is_dark()
@@ -40,7 +40,8 @@ return {
 		priority = 1000,
 	},
 	{
-		"EdenEast/nightfox.nvim",
+		"projekt0n/github-nvim-theme",
+		name = "github-theme",
 		lazy = false,
 		priority = 1000,
 	},
@@ -50,7 +51,7 @@ return {
 		priority = 999,
 		dependencies = {
 			"catppuccin/nvim",
-			"EdenEast/nightfox.nvim",
+			"projekt0n/github-nvim-theme",
 		},
 		main = "auto-dark-mode",
 		opts = {

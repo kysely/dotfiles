@@ -1,6 +1,6 @@
 font-size=13
 adjust-cell-height = 30%
-theme = light:Dawnfox,dark:Catppuccin Mocha
+theme = light:GitHub Light Default,dark:Catppuccin Mocha
 
 # Disable font zoom shortcuts (conflicts with Cmd+1 on Czech layout)
 keybind = cmd++=unbind
