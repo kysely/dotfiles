@@ -3,3 +3,5 @@ gui:
 git:
   pagers:
     - externalDiffCommand: difft --color=always --display=side-by-side-show-both
+    - colorArg: always
+      pager: hunk pager
