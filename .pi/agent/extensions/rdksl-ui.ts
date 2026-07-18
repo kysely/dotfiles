@@ -1326,7 +1326,9 @@ function usageStatus(session: any, autoCompactEnabled: boolean, cacheHolder?: an
   if ((totalCacheRead > 0 || totalCacheWrite > 0) && latestCacheHitRate !== undefined) {
     parts.push(dim(`CH${latestCacheHitRate.toFixed(1)}%`));
   }
-  const usingSubscription = state.model ? session.modelRegistry.isUsingOAuth?.(state.model) : false;
+  const usingSubscription = state.model
+    ? (session.modelRuntime?.isUsingOAuth?.(state.model.provider) ?? session.modelRegistry?.isUsingOAuth?.(state.model) ?? false)
+    : false;
   if (totalCost || usingSubscription) {
     parts.push(dim(`$${totalCost.toFixed(3)}${usingSubscription ? " (sub)" : ""}`));
   }
