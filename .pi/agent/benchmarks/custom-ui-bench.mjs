@@ -1,11 +1,16 @@
 #!/usr/bin/env node
+import { execFileSync } from "node:child_process";
+import { realpathSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { performance } from "node:perf_hooks";
-import { createJiti } from "/Users/radek/.nvm/versions/node/v24.17.0/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/jiti/lib/jiti.mjs";
 
-const piRoot = "/Users/radek/.nvm/versions/node/v24.17.0/lib/node_modules/@earendil-works/pi-coding-agent";
+const piCli = realpathSync(execFileSync("which", ["pi"], { encoding: "utf8" }).trim());
+const piRoot = resolve(dirname(piCli), "..");
 const piPkg = `${piRoot}/dist/index.js`;
 const piTui = `${piRoot}/node_modules/@earendil-works/pi-tui/dist/index.js`;
 const extensionPath = new URL("../extensions/rdksl-ui.ts", import.meta.url).pathname;
+const { createJiti } = await import(pathToFileURL(`${piRoot}/node_modules/jiti/lib/jiti.mjs`).href);
 
 const mode = process.argv[2] ?? "extension"; // extension | baseline
 const pairs = Number(process.argv[3] ?? 300);
@@ -94,6 +99,31 @@ for (let i = 0; i < iterations; i++) {
 }
 
 const avg = samples.reduce((sum, value) => sum + value, 0) / samples.length;
+
+// Regression: Pi can render a streaming assistant row once while it is still
+// empty, then update that same row when the first provider content arrives.
+// The outer chat cache must not retain the initial empty rendering.
+const streamingTui = new TUI(terminal);
+const streamingChat = new Container();
+const streamingAssistant = new AssistantMessageComponent(undefined);
+streamingChat.addChild(streamingAssistant);
+streamingTui.addChild({ render: () => [], invalidate() {} });
+streamingTui.addChild({ render: () => [], invalidate() {} });
+streamingTui.addChild(streamingChat);
+for (let i = 0; i < 6; i++) streamingTui.addChild({ render: () => [], invalidate() {} });
+streamingTui.doRender();
+streamingAssistant.updateContent({
+  role: "assistant",
+  content: [{ type: "text", text: "STREAMED_SENTINEL" }],
+  stopReason: "end",
+  usage: usage(),
+});
+streamingTui.doRender();
+const emptyStreamingUpdateVisible = streamingTui.previousLines.some((line) => line.includes("STREAMED_SENTINEL"));
+if (!emptyStreamingUpdateVisible) {
+  throw new Error("Streaming assistant content remained hidden after its initial empty render");
+}
+
 console.log(JSON.stringify({
   mode,
   pairs,
@@ -103,4 +133,5 @@ console.log(JSON.stringify({
   minNoopMs: Number(Math.min(...samples).toFixed(3)),
   maxNoopMs: Number(Math.max(...samples).toFixed(3)),
   lines: tui.previousLines.length,
+  emptyStreamingUpdateVisible,
 }, null, 2));

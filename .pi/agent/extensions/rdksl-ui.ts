@@ -12,7 +12,7 @@ const FOOTER_PATCH_FLAG = Symbol.for("radek.pi.footer-one-line-status");
 const FOOTER_DATA_PATCH_FLAG = Symbol.for("radek.pi.footer-data-status-version");
 const MARKDOWN_PATCH_FLAG = Symbol.for("radek.pi.markdown-base-text-color");
 const LEGACY_BACKGROUND_PATCH_FLAG = Symbol.for("radek.pi.subtle-backgrounds");
-const PATCH_VERSION = 29;
+const PATCH_VERSION = 30;
 const EDITOR_PATCH_VERSION = 6;
 const USER_MESSAGE_PATCH_VERSION = 8;
 const ASSISTANT_MESSAGE_PATCH_VERSION = 11;
@@ -22,7 +22,7 @@ const MARKDOWN_PATCH_VERSION = 3;
 const CONFIG_CHECK_INTERVAL_MS = 1000;
 const THEME_CACHE_VERSION = 1;
 const CHAT_ENTRY_BLOCK_CACHE_VERSION = 4;
-const CHAT_CONTAINER_CACHE_VERSION = 4;
+const CHAT_CONTAINER_CACHE_VERSION = 5;
 
 const PI_THEME_SYMBOL = Symbol.for("@earendil-works/pi-coding-agent:theme");
 
@@ -1608,6 +1608,14 @@ function renderChatContainer(child: ComponentLike, terminalWidth: number, conten
   const blocks: ChatBlockMeta[] = [];
   let signatureAvailable = true;
   for (const entry of child.children) {
+    const cacheable = isCacheableChatEntry(entry);
+    if (cacheable) {
+      // Streaming assistant/tool rows can render empty before their first update.
+      // Link them to the container before that empty render so the update can
+      // invalidate the outer cache instead of leaving the row invisible forever.
+      entry.__radekChatContainerOwner = child;
+    }
+
     const block = renderCachedChatEntryBlock(entry, terminalWidth, contentPadding, baseThemeKey);
     if (block.length === 0) continue;
 
@@ -1619,12 +1627,11 @@ function renderChatContainer(child: ComponentLike, terminalWidth: number, conten
     lines.push(...block);
     const renderedBlockLength = lines.length - blockStart;
 
-    if (!isCacheableChatEntry(entry)) {
+    if (!cacheable) {
       signatureAvailable = false;
       continue;
     }
 
-    entry.__radekChatContainerOwner = child;
     const blockKey = `${getChatEntryId(entry)}:${entry.__radekChatBlockVersion ?? 0}:${renderedBlockLength}:${chatEntryBlockThemeKey(entry, baseThemeKey)}`;
     if (signatureAvailable) {
       signatureParts.push(blockKey);
