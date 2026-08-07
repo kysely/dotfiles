@@ -16,7 +16,7 @@ const mode = process.argv[2] ?? "extension"; // extension | baseline
 const pairs = Number(process.argv[3] ?? 300);
 const iterations = Number(process.argv[4] ?? 30);
 
-const { TUI, Container } = await import(piTui);
+const { TuiMainScreen, Container } = await import(piTui);
 const { initTheme, AssistantMessageComponent, UserMessageComponent, ToolExecutionComponent } = await import(piPkg);
 initTheme("light", false);
 
@@ -31,7 +31,12 @@ if (mode !== "baseline") {
   const theme = globalThis[Symbol.for("@earendil-works/pi-coding-agent:theme")];
   mod.default({
     on(event, handler) {
-      if (event === "session_start") handler({}, { ui: { theme } });
+      if (event === "session_start") {
+        handler({}, {
+          mode: "tui",
+          ui: { theme, onTerminalInput: () => () => {} },
+        });
+      }
     },
   });
 }
@@ -50,7 +55,7 @@ const terminal = {
   clearScreen() {},
 };
 
-const tui = new TUI(terminal);
+const tui = new TuiMainScreen(terminal);
 const chat = new Container();
 const usage = () => ({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: { total: 0 } });
 
@@ -79,12 +84,13 @@ for (let i = 0; i < pairs; i++) {
   }
 }
 
-// Mirror Pi's current root child order:
-// header, loaded resources, chat, pending messages, status,
-// widgets-above, editor, widgets-below, footer.
-tui.addChild({ render: () => [], invalidate() {} });
-tui.addChild({ render: () => [], invalidate() {} });
-tui.addChild(chat);
+// Mirror Pi's current root layout. Header, loaded resources, and chat live in
+// the document container; the other six children form the prompt/status dock.
+const document = new Container();
+document.addChild({ render: () => [], invalidate() {} });
+document.addChild({ render: () => [], invalidate() {} });
+document.addChild(chat);
+tui.addChild(document);
 for (let i = 0; i < 6; i++) tui.addChild({ render: () => [], invalidate() {} });
 
 const firstStart = performance.now();
@@ -103,13 +109,15 @@ const avg = samples.reduce((sum, value) => sum + value, 0) / samples.length;
 // Regression: Pi can render a streaming assistant row once while it is still
 // empty, then update that same row when the first provider content arrives.
 // The outer chat cache must not retain the initial empty rendering.
-const streamingTui = new TUI(terminal);
+const streamingTui = new TuiMainScreen(terminal);
 const streamingChat = new Container();
 const streamingAssistant = new AssistantMessageComponent(undefined);
 streamingChat.addChild(streamingAssistant);
-streamingTui.addChild({ render: () => [], invalidate() {} });
-streamingTui.addChild({ render: () => [], invalidate() {} });
-streamingTui.addChild(streamingChat);
+const streamingDocument = new Container();
+streamingDocument.addChild({ render: () => [], invalidate() {} });
+streamingDocument.addChild({ render: () => [], invalidate() {} });
+streamingDocument.addChild(streamingChat);
+streamingTui.addChild(streamingDocument);
 for (let i = 0; i < 6; i++) streamingTui.addChild({ render: () => [], invalidate() {} });
 streamingTui.doRender();
 streamingAssistant.updateContent({

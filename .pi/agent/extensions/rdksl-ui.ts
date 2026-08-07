@@ -1,9 +1,10 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { AssistantMessageComponent, FooterComponent, Theme, ToolExecutionComponent, UserMessageComponent } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, Editor, getKeybindings, isKeyRelease, Markdown, matchesKey, TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, Editor, getKeybindings, isKeyRelease, Markdown, matchesKey, TuiMainScreen, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 const PATCH_FLAG = Symbol.for("radek.pi.tui-mixed-horizontal-padding");
+const TERMINAL_INPUT_HANDLER_FLAG = Symbol.for("radek.pi.tui-terminal-input-handler");
 const EDITOR_PATCH_FLAG = Symbol.for("radek.pi.prompt-caret-editor");
 const USER_MESSAGE_PATCH_FLAG = Symbol.for("radek.pi.user-message-caret");
 const ASSISTANT_MESSAGE_PATCH_FLAG = Symbol.for("radek.pi.assistant-message-caret");
@@ -12,7 +13,7 @@ const FOOTER_PATCH_FLAG = Symbol.for("radek.pi.footer-one-line-status");
 const FOOTER_DATA_PATCH_FLAG = Symbol.for("radek.pi.footer-data-status-version");
 const MARKDOWN_PATCH_FLAG = Symbol.for("radek.pi.markdown-base-text-color");
 const LEGACY_BACKGROUND_PATCH_FLAG = Symbol.for("radek.pi.subtle-backgrounds");
-const PATCH_VERSION = 30;
+const PATCH_VERSION = 31;
 const EDITOR_PATCH_VERSION = 6;
 const USER_MESSAGE_PATCH_VERSION = 8;
 const ASSISTANT_MESSAGE_PATCH_VERSION = 11;
@@ -27,6 +28,7 @@ const CHAT_CONTAINER_CACHE_VERSION = 5;
 const PI_THEME_SYMBOL = Symbol.for("@earendil-works/pi-coding-agent:theme");
 
 let currentTheme: any;
+let activeMainScreenTui: MaybeTui | undefined;
 let nextChatEntryId = 1;
 
 const trimCache = new WeakMap<string[], string[]>();
@@ -61,7 +63,11 @@ type MaybeTui = {
   handleInput?: (data: string, ...args: unknown[]) => unknown;
   start?: (...args: unknown[]) => unknown;
   stop?: (...args: unknown[]) => unknown;
+  addInputListener?: (listener: (data: string) => unknown) => (() => void);
   requestRender?: () => void;
+  getFocusedComponent?: () => unknown;
+  hasOverlay?: () => boolean;
+  setShowHardwareCursor?: (enabled: boolean) => void;
   compositeOverlays?: (...args: unknown[]) => string[];
   getHorizontalPadding?: (width: number) => Padding;
   applyHorizontalPadding?: (lines: string[], padding: Padding) => string[];
@@ -93,6 +99,7 @@ type PatchState = {
   originalHandleInput?: unknown;
   originalStart?: unknown;
   originalStop?: unknown;
+  originalAddInputListener?: unknown;
 };
 
 type RenderPatchState = {
@@ -464,14 +471,16 @@ function renderPromptEditorChild(child: ComponentLike, terminalWidth: number): s
   }
 }
 
+function isDocumentContainerChild(index: number, childCount: number, child: ComponentLike): boolean {
+  // Since Pi 0.84, header, loaded resources, and chat are nested in a document
+  // container. The remaining six root children form the prompt/status dock.
+  return index === 0 && childCount === 7 && Array.isArray(child.children) && child.children.length >= 3;
+}
+
 function isChatContainerChild(index: number, childCount: number): boolean {
-  // Pi's root TUI children are currently appended as:
-  // header, loaded-resources, chat, pending-messages, status,
-  // widgets-above, editor, widgets-below, footer.
-  // Older/synthetic layouts omit loaded-resources/status variants, so derive the
-  // chat slot from the stable seven-child tail when possible and fall back to 1.
-  const expectedIndex = childCount >= 8 ? childCount - 7 : 1;
-  return index === expectedIndex;
+  // Pre-0.84 Pi appended header, loaded resources, and chat directly to the root,
+  // followed by the stable seven-child tail.
+  return childCount >= 8 && index === childCount - 7;
 }
 
 function isEditorContainerChild(index: number, childCount: number): boolean {
@@ -1657,6 +1666,23 @@ function renderChatContainer(child: ComponentLike, terminalWidth: number, conten
   return { lines, signature, blocks: signature ? blocks : undefined };
 }
 
+function renderDocumentContainer(child: ComponentLike, terminalWidth: number, contentPadding: number): string[] {
+  if (!Array.isArray(child.children) || child.children.length < 3) {
+    return renderChildWithPadding(child, terminalWidth, contentPadding);
+  }
+
+  const lines: string[] = [];
+  const chatIndex = child.children.length - 1;
+  child.children.forEach((documentChild, index) => {
+    if (index === chatIndex) {
+      lines.push(...renderChatContainer(documentChild, terminalWidth, contentPadding).lines);
+    } else {
+      lines.push(...renderChildWithPadding(documentChild, terminalWidth, contentPadding));
+    }
+  });
+  return lines;
+}
+
 function isTerminalImageLine(line: string): boolean {
   return line.includes("\x1b_G") || line.includes("\x1b]1337;File=");
 }
@@ -1878,6 +1904,7 @@ function renderStickyPromptFrame(tui: MaybeTui, scrollableLines: string[], stick
 }
 
 function hasVisibleOverlay(tui: MaybeTui): boolean {
+  if (typeof tui.hasOverlay === "function") return tui.hasOverlay();
   if (!Array.isArray(tui.overlayStack) || tui.overlayStack.length === 0) return false;
   if (typeof tui.isOverlayVisible !== "function") return true;
   return tui.overlayStack.some((entry) => tui.isOverlayVisible?.(entry));
@@ -1929,9 +1956,13 @@ function editorText(editor: Editor): string {
   return "";
 }
 
+function focusedTuiComponent(tui: MaybeTui): unknown {
+  return tui.getFocusedComponent?.() ?? tui.focusedComponent;
+}
+
 function submitShouldJumpToBottom(tui: MaybeTui, data: string): { editor: Editor; beforeText: string } | undefined {
   if (isKeyRelease(data)) return undefined;
-  const editor = tui.focusedComponent;
+  const editor = focusedTuiComponent(tui);
   if (!(editor instanceof Editor)) return undefined;
   if ((editor as any).disableSubmit) return undefined;
 
@@ -1952,7 +1983,7 @@ function markJumpToSubmittedMessage(tui: MaybeTui, submit: { editor: Editor; bef
 }
 
 function focusedEditorHasScrollablePrompt(tui: MaybeTui): boolean {
-  const editor = tui.focusedComponent;
+  const editor = focusedTuiComponent(tui);
   if (!(editor instanceof Editor)) return false;
   const layoutText = (editor as any).layoutText;
   if (typeof layoutText !== "function") return false;
@@ -2013,13 +2044,15 @@ function handleStickyScrollInput(tui: MaybeTui, data: string): boolean {
     // bytes into the prompt; only wheel vertical gestures scroll the transcript.
     if (mouse.kind !== "wheel" || mouse.direction === "left" || mouse.direction === "right") return true;
     if (!tui.__radekStickyPromptActive || hasVisibleOverlay(tui)) return true;
-    if (tui.focusedComponent && !(tui.focusedComponent instanceof Editor)) return true;
+    const focused = focusedTuiComponent(tui);
+    if (focused && !(focused instanceof Editor)) return true;
     applyStickyScrollStep(tui, mouse.direction === "up" ? MOUSE_WHEEL_SCROLL_LINES : -MOUSE_WHEEL_SCROLL_LINES);
     return true;
   }
 
   if (!tui.__radekStickyPromptActive || hasVisibleOverlay(tui)) return false;
-  if (tui.focusedComponent && !(tui.focusedComponent instanceof Editor)) return false;
+  const focused = focusedTuiComponent(tui);
+  if (focused && !(focused instanceof Editor)) return false;
 
   const step = scrollStepForInput(tui, data);
   if (step === undefined) return false;
@@ -2027,12 +2060,44 @@ function handleStickyScrollInput(tui: MaybeTui, data: string): boolean {
   return applyStickyScrollStep(tui, step);
 }
 
+function handleMainScreenTerminalInput(tui: MaybeTui, data: string): { consume?: boolean } | undefined {
+  if (handleStickyScrollInput(tui, data)) return { consume: true };
+
+  const submit = submitShouldJumpToBottom(tui, data);
+  if (submit) {
+    // Input listeners run before Pi forwards input to the focused editor.
+    // Re-check after that synchronous dispatch to see whether submit cleared it.
+    queueMicrotask(() => {
+      if (activeMainScreenTui === tui) markJumpToSubmittedMessage(tui, submit);
+    });
+  }
+  return undefined;
+}
+
 export default function (pi?: any) {
   restoreLegacyThemeMonkeyPatches();
 
+  let unsubscribeTerminalInput: (() => void) | undefined;
   pi?.on?.("session_start", (_event: unknown, ctx: any) => {
     restoreLegacyThemeMonkeyPatches(ctx.ui.theme);
     currentTheme = ctx.ui.theme;
+
+    unsubscribeTerminalInput?.();
+    unsubscribeTerminalInput = undefined;
+    if (ctx.mode === "tui" && typeof ctx.ui.onTerminalInput === "function") {
+      const handler = (data: string) => {
+        const tui = activeMainScreenTui;
+        return tui ? handleMainScreenTerminalInput(tui, data) : undefined;
+      };
+      (handler as any)[TERMINAL_INPUT_HANDLER_FLAG] = true;
+      unsubscribeTerminalInput = ctx.ui.onTerminalInput(handler);
+    }
+  });
+  pi?.on?.("session_shutdown", () => {
+    unsubscribeTerminalInput?.();
+    unsubscribeTerminalInput = undefined;
+    if (activeMainScreenTui) setMouseReporting(activeMainScreenTui, false);
+    activeMainScreenTui = undefined;
   });
   patchMarkdownBaseTextColor();
   patchEditorRender();
@@ -2040,7 +2105,7 @@ export default function (pi?: any) {
   patchToolExecutionRender();
   patchAssistantMessageRender();
   patchFooterRender();
-  const proto = TUI.prototype as unknown as Record<PropertyKey, unknown>;
+  const proto = TuiMainScreen.prototype as unknown as Record<PropertyKey, unknown>;
   const existing = proto[PATCH_FLAG] as PatchState | undefined;
   if (existing?.version === PATCH_VERSION && typeof existing.originalDoRender === "function") return;
 
@@ -2052,12 +2117,14 @@ export default function (pi?: any) {
     ["handleInput", "originalHandleInput"],
     ["start", "originalStart"],
     ["stop", "originalStop"],
+    ["addInputListener", "originalAddInputListener"],
   ]);
 
   const originalDoRender = proto.doRender;
   const originalHandleInput = proto.handleInput;
   const originalStart = proto.start;
   const originalStop = proto.stop;
+  const originalAddInputListener = proto.addInputListener;
   if (typeof originalDoRender !== "function") return;
 
   if (typeof originalHandleInput === "function") {
@@ -2070,8 +2137,19 @@ export default function (pi?: any) {
     };
   }
 
+  if (typeof originalAddInputListener === "function") {
+    proto.addInputListener = function patchedAddInputListener(this: MaybeTui, listener: unknown, ...listenerArgs: unknown[]) {
+      if (typeof listener === "function" && (listener as any)[TERMINAL_INPUT_HANDLER_FLAG]) {
+        activeMainScreenTui = this;
+        setMouseReporting(this, true);
+      }
+      return (originalAddInputListener as Function).apply(this, [listener, ...listenerArgs]);
+    };
+  }
+
   if (typeof originalStart === "function") {
     proto.start = function patchedStart(this: MaybeTui, ...startArgs: unknown[]) {
+      activeMainScreenTui = this;
       const result = (originalStart as Function).apply(this, startArgs);
       setMouseReporting(this, true);
       return result;
@@ -2081,14 +2159,17 @@ export default function (pi?: any) {
   if (typeof originalStop === "function") {
     proto.stop = function patchedStop(this: MaybeTui, ...stopArgs: unknown[]) {
       setMouseReporting(this, false);
+      if (activeMainScreenTui === this) activeMainScreenTui = undefined;
       return (originalStop as Function).apply(this, stopArgs);
     };
   }
 
   proto.doRender = function patchedDoRender(this: MaybeTui, ...args: unknown[]) {
+    activeMainScreenTui = this;
     // Use the terminal's real hardware cursor for prompt blinking. The editor
     // still emits CURSOR_MARKER, so TUI knows where to place it.
-    (this as any).showHardwareCursor = true;
+    if (typeof this.setShowHardwareCursor === "function") this.setShowHardwareCursor(true);
+    else (this as any).showHardwareCursor = true;
     setMouseReporting(this, true);
     const terminalWidth = Number(this.terminal?.columns) || 80;
     const contentPadding = getContentPadding();
@@ -2119,6 +2200,11 @@ export default function (pi?: any) {
       const stickyLines: string[] = [];
       const childCount = this.children.length;
       this.children.forEach((child, index) => {
+        if (isDocumentContainerChild(index, childCount, child)) {
+          scrollableLines.push(...renderDocumentContainer(child, terminalWidth, contentPadding));
+          return;
+        }
+
         if (isChatContainerChild(index, childCount)) {
           const chat = renderChatContainer(child, terminalWidth, contentPadding);
           scrollableLines.push(...chat.lines);
@@ -2181,5 +2267,12 @@ export default function (pi?: any) {
     }
   };
 
-  proto[PATCH_FLAG] = { version: PATCH_VERSION, originalDoRender, originalHandleInput, originalStart, originalStop };
+  proto[PATCH_FLAG] = {
+    version: PATCH_VERSION,
+    originalDoRender,
+    originalHandleInput,
+    originalStart,
+    originalStop,
+    originalAddInputListener,
+  };
 }
