@@ -344,6 +344,12 @@ install_npm_globals() {
   npm_global_install hunkdiff
 }
 
+install_pi_packages() {
+  # pi install defaults to user-global scope and preserves existing settings.
+  # Run as the current user, not via sudo.
+  pi install npm:pi-mcp-adapter
+}
+
 main() {
   case "$(uname -s)" in
   Darwin)
@@ -374,6 +380,7 @@ main() {
   install_starship
   install_nvm
   install_npm_globals
+  install_pi_packages
 }
 
 main "$@"
