@@ -38,12 +38,28 @@ return {
 		name = "catppuccin",
 		lazy = false,
 		priority = 1000,
+		opts = {
+			custom_highlights = function(colors)
+				return {
+					SnacksIndent = { fg = colors.surface0 },
+					SnacksIndentScope = { fg = colors.surface2 },
+				}
+			end,
+		},
 	},
 	{
 		"projekt0n/github-nvim-theme",
 		name = "github-theme",
 		lazy = false,
 		priority = 1000,
+		opts = {
+			groups = {
+				github_light = {
+					SnacksIndent = { fg = "#e7eaf0" },
+					SnacksIndentScope = { fg = "#d0d7de" },
+				},
+			},
+		},
 	},
 	{
 		"f-person/auto-dark-mode.nvim",
