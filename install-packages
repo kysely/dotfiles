@@ -154,7 +154,17 @@ install_difftastic() {
     ;;
   esac
 
-  url="https://github.com/Wilfred/difftastic/releases/latest/download/difft-$target.tar.gz"
+  # Release filenames may include a version; use the published asset URL.
+  url="$(curl -fsSL https://api.github.com/repos/Wilfred/difftastic/releases/latest \
+    | jq -r --arg suffix "-$target.tar.gz" \
+      '[.assets[] | select(.name | startswith("difft-") and endswith($suffix)) | .browser_download_url][0] // empty')"
+
+  if [[ -z "$url" ]]; then
+    echo "Could not find a difftastic release asset for $target." >&2
+    exit 1
+  fi
+
+  echo "Installing difftastic from $url"
   tmpdir="$(mktemp -d)"
   archive="$tmpdir/difftastic.tar.gz"
 
