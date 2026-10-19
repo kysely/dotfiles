@@ -131,6 +131,54 @@ require_curl() {
   fi
 }
 
+neovim_is_compatible() {
+  has nvim && [[ "$(nvim --headless -u NONE -i NONE \
+    '+lua io.write(vim.fn.has("nvim-0.11.2"))' +qa 2>/dev/null)" == "1" ]]
+}
+
+install_neovim() {
+  if neovim_is_compatible; then
+    return
+  fi
+
+  if [[ "$(uname -s)" != "Linux" ]]; then
+    echo "LazyVim requires Neovim >= 0.11.2; run brew upgrade neovim." >&2
+    exit 1
+  fi
+
+  require_curl
+
+  local arch url tmpdir
+  case "$(uname -m)" in
+  x86_64 | amd64) arch="x86_64" ;;
+  aarch64 | arm64) arch="arm64" ;;
+  *)
+    echo "Unsupported architecture for Neovim: $(uname -m)" >&2
+    exit 1
+    ;;
+  esac
+
+  url="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$arch.tar.gz"
+  echo "Installing Neovim from $url"
+  tmpdir="$(mktemp -d)"
+  (
+    trap 'rm -rf "$tmpdir"' EXIT
+    curl -fsSL "$url" -o "$tmpdir/neovim.tar.gz"
+    tar -xzf "$tmpdir/neovim.tar.gz" -C "$tmpdir"
+    # Keep the runtime alongside the executable, not just the binary.
+    "$tmpdir/nvim-linux-$arch/bin/nvim" --version
+    sudo install -d -m 0755 /opt/neovim /usr/local/bin
+    sudo cp -a "$tmpdir/nvim-linux-$arch/." /opt/neovim/
+    sudo ln -sfn /opt/neovim/bin/nvim /usr/local/bin/nvim
+  )
+
+  hash -r
+  if ! neovim_is_compatible; then
+    echo "Neovim >= 0.11.2 is required. Check that /usr/local/bin precedes other Neovim installations in PATH." >&2
+    exit 1
+  fi
+}
+
 install_difftastic() {
   if has difft; then
     return
@@ -383,6 +431,7 @@ main() {
   esac
 
   install_linux_command_shims
+  install_neovim
   install_difftastic
   install_lazygit
   install_lazycaddy
