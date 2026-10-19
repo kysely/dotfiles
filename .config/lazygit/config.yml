@@ -1,7 +1,8 @@
 gui:
   sidePanelWidth: 0.2
 git:
-  pagers:
-    - externalDiffCommand: difft --color=always --display=side-by-side-show-both
+  diffRenderers:
+    - command: difft --color=always --display=side-by-side-show-both
+      type: extDiff
     - colorArg: always
-      pager: hunk pager
+      command: hunk pager
